@@ -16,7 +16,7 @@ Canvaschat helps in communicating between two people in a fun and interactive wa
 
 ### How would this app help
 
-Tradationally chat applications have been text based, until most recently we seen people using emojis and gif images for expressing their feeling over a chat conversation. Canvaschat take this to another level. Using HTML5 canvas and node js users can express their chat conversations by drawing on the canvas.
+Tradationally chat applications have been text based, only recently have we seen people using emojis and gif images for expressing their feeling over a chat conversation. Canvaschat takes this to another level. Using HTML5 canvas and node js in the backend, users can express their chat conversations by drawing on the canvas. These chats can then be saved or shared on web (e.g. facebook).
 
 ### User Personas
 
