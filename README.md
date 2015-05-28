@@ -30,12 +30,12 @@ Tradationally chat applications have been text based, until most recently we see
 
 ### User stories
 
-**Tim** has lot of friends in high school and is regularly in concat with them over chat based application. He enjoys playing online games with his friends and loves to communicate about his game strategies over chat conversations.
+**Tim** has lot of friends in high school and is regularly in contact with them over chat based application. He enjoys playing online games with his friends and loves to communicate about his game strategies over chat conversations.
 
 **Alice** is an art student who loves to collobrate on her art work with others and share her work on social platforms like facebook.
 
-**Bob** as architect constantly communicates with his associates mostly explinaing some stuff over phone, chatting apps or email. He loves to have an app where he can point at stuff and explain it better in parallel when communicating with his associates.
+**Bob** is an architect and constantly communicates with his associates mostly explinaing some stuff over phone, chatting apps or email. He loves to have an app where he can point at stuff and explain it better in parallel when communicating with his associates.
 
-**Bryan** has a lot of friends who is regularly in touch with. He constantly refers to his previous chat conversations and find it very helpful to get a context when chatting with his friends.
+**Bryan** has a lot of friends who are regularly in touch with. He constantly refers to his previous chat conversations and finds it very helpful to get a context when chatting with his friends.
 
 
