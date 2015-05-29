@@ -1,0 +1,27 @@
+{
+  "name": "canvaschat",
+  "version": "1.0.0",
+  "description": "Canvaschat helps in communicating between two people in a fun and interactive way. Chat messages are communicated in real time, they can be persisted to a local database or shared on a social platform.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon --exec babel-node -- --stage 1 --optional strict -- index.js",
+    "test": "mocha --reporter spec "
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KatDevs/canvaschat.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KatDevs/canvaschat/issues"
+  },
+  "homepage": "https://github.com/KatDevs/canvaschat",
+  "dependencies": {
+    "express": "^4.12.4",
+    "morgan": "^1.5.3"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  }
+}
