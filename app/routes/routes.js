@@ -33,6 +33,10 @@ module.exports = (app) => {
 		failureFlash: true
 	}))
 
+	app.get('/chat', isLoggedIn, (req, res) => {
+		res.render('chat.ejs', {})
+	})
+
 	app.get('/profile', isLoggedIn, (req, res) => {
         res.render('profile.ejs', {
             user: req.user,
