@@ -6,7 +6,6 @@ let path = require('path')
 let routes = require('./routes/routes')
 let Server = require('http').Server
 let browserify = require('browserify-middleware')
-
 require('songbird')
 
 class App {
@@ -25,7 +24,9 @@ class App {
 		
 		routes(this.app)
 		browserify.settings({transform: ['babelify']})
-        app.use('/js/index.js', browserify('./public/js/index.js'))
+        app.use(express.static('public'));
+        // TODO find a way to bundle all files together
+        app.use('/login/main.js', browserify('./public/js/login/main.js'))
 
 		this.server = Server(app)
 
