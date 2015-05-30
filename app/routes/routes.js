@@ -36,6 +36,7 @@ module.exports = (app) => {
 	app.get('/profile', isLoggedIn, (req, res) => {
         res.render('profile.ejs', {
             user: req.user,
+            state: 'initial',
             message: req.flash('error')
         })
     })
