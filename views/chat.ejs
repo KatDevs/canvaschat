@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+    <title>Canvas Chat</title>    
+    <link rel="stylesheet" href="vendor/materialize/css/materialize.min.css">    
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/main.css">    
+    <!-- Load vendor JS -->
+    <script type="text/javascript" src="vendor/jquery/jquery.js"></script>
+    <script type="text/javascript" src="vendor/materialize/js/materialize.js"></script>
+</head>
+<body>    	
+	<header>
+		<%- include partials/common/header.ejs %>
+	</header>
+	<main>
+		<%- include partials/chat/canvas.ejs %>	    
+    </main>    
+    <footer class="page-footer">
+    	<%- include partials/chat/friends.ejs %>    	
+    </footer>
+    <!-- Load profile main js -->
+    <script src="/chat/main.js"></script>
+</body>
+</html>
+
