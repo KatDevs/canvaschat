@@ -2,24 +2,20 @@
   <div class="col s12">
     <div class="card">
       <div class="card-content">
-        <% if(state === "loading") {%>
-           <%- include ../common/loading.ejs %>             
-        <%} else {%>
-            <% if (user.facebook.token) { %>
-                <h4>Facebook Details</h4>
-                <ul class="collection">
-                  <li class="collection-item">Id: <%= user.facebook.id %></li>
-                  <li class="collection-item truncate">Token: <%= user.facebook.token %></li>
-                  <li class="collection-item truncate">email: <%= user.facebook.email %></li>
-                  <li class="collection-item">Name: <%= user.facebook.name %></li>
-                </ul>
-                <div class="card-action">
-                  <a href="/unlink/facebook" class="waves-effect waves-light btn">Unlink</a>
-                </div>            
-            <% } else { %>
-                <a href="/connect/facebook" class="waves-effect waves-light btn">Connect Facebook</a>
-            <% } %>  
-        <% } %>              
+        <% if (user.facebook.token) { %>
+            <h4>Facebook Details</h4>
+            <ul class="collection">
+              <li class="collection-item">Id: <%= user.facebook.id %></li>
+              <li class="collection-item truncate">Token: <%= user.facebook.token %></li>
+              <li class="collection-item truncate">email: <%= user.facebook.email %></li>
+              <li class="collection-item">Name: <%= user.facebook.name %></li>
+            </ul>
+            <div class="card-action">
+              <a href="/unlink/facebook" class="waves-effect waves-light btn">Unlink</a>
+            </div>            
+        <% } else { %>
+            <a href="/connect/facebook" class="waves-effect waves-light btn">Connect Facebook</a>
+        <% } %>          
       </div>      
     </div>
   </div>
