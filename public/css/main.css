@@ -1,3 +1,4 @@
+
 body {
     display: flex;
     min-height: 100vh;
@@ -5,4 +6,11 @@ body {
 }
 main {
     flex: 1 0 auto;
+}
+.hide-content {
+	display: none !important;
+}
+
+.padding-top {
+	padding-top: 10px;
 }

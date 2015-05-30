@@ -12,6 +12,7 @@ function useExternalPassportStrategy(OauthStrategy, config, field) {
   passport.use(new OauthStrategy(config, nodeifyit(authCB, {spread: true})))
   let socialNetworkType = field;
   async function authCB(req, token, _ignored_, account) {
+    console.log("reached here 123");
       if(!account) {
         throw Error("Invalid account");  
       }     
