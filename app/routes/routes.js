@@ -61,4 +61,10 @@ module.exports = (app) => {
       failureRedirect: '/login',
       failureFlash: true
   	}))
+
+    app.get('/logout', (req, res) => {
+    	req.logout()
+    	req.redirect('/')
+    })
+
 }
