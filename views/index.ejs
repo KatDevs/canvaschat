@@ -1,11 +1,14 @@
 <!doctype html>
 <html>
 <head>
-    <title>Canvas Chat</title>    
+    <title>Canvas Chat</title>        
 </head>
 <body>
     
     <div class="container">
+     <% if (message.length > 0) { %>
+        <%- include partials/common/error.ejs %>        
+    <% } %>          
         <div class="row">
             <div class="col s12 l8 offset-l2">
                 <div class="row">
@@ -19,10 +22,10 @@
                                     </ul>
                                 </div>
                                 <div id="signIn" class="col s12">
-                                    <%- include signin.ejs %>
+                                    <%- include partials/index/signin.ejs %>
                                 </div>
                                 <div id="signUp" class="col s12">
-                                    <%- include signup.ejs %>
+                                    <%- include partials/index/signup.ejs %>
                                 </div>
                             </div>
                         </div>
