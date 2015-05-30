@@ -40,4 +40,9 @@ module.exports = (app) => {
             message: req.flash('error')
         })
     })
+
+    app.get('/logout', (req, res) => {
+    	req.logout()
+    	req.redirect('/')
+    })
 }
