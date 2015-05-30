@@ -67,6 +67,7 @@ class App {
         // login/main.js
         app.use('/login/main.js', browserify('./public/js/login/main.js'))
         // TODO: profile/main.js
+        app.use('/profile/main.js', browserify('./public/js/profile/main.js'))
         // TODO: chatroom/main.js
 
 		this.server = Server(app)

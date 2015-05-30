@@ -36,13 +36,35 @@ module.exports = (app) => {
 	app.get('/profile', isLoggedIn, (req, res) => {
         res.render('profile.ejs', {
             user: req.user,
-            state: 'initial',
             message: req.flash('error')
         })
     })
+
+	app.get('/auth/facebook', passport.authenticate('facebook', {
+		scope: ['email', 'user_posts', 'user_photos', 'read_stream',
+		 'public_profile','user_likes', 'publish_actions']
+		}))
+
+	app.get('/auth/facebook/callback', passport.authenticate('facebook', {
+	  successRedirect: '/profile',
+	  failureRedirect: '/login',
+	  failureFlash: true
+	}))
+  
+	app.get('/connect/facebook', passport.authorize('facebook', {
+		scope: ['email', 'user_posts', 'read_stream', 'user_photos',
+		 'public_profile','user_likes', 'publish_actions']
+	}))
+
+  	app.get('/connect/facebook/callback', passport.authorize('facebook', {
+      successRedirect: '/profile',
+      failureRedirect: '/login',
+      failureFlash: true
+  	}))
 
     app.get('/logout', (req, res) => {
     	req.logout()
     	req.redirect('/')
     })
+
 }
