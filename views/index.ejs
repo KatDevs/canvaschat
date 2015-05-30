@@ -1,86 +1,42 @@
 <!doctype html>
 <html>
 <head>
-    <title>Canvas Chat</title>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
-    <style>
-        body         { padding-top:80px; }
-    </style>
+    <title>Canvas Chat</title>    
+    <link rel="stylesheet" href="vendor/materialize/css/materialize.min.css">    
+    <link rel="stylesheet" href="css/main.css">    
+    <!-- Load vendor JS -->
+    <script type="text/javascript" src="vendor/jquery/jquery.js"></script>
+    <script type="text/javascript" src="vendor/materialize/js/materialize.js"></script>
 </head>
 <body>
     
     <div class="container">
-        <div class="text-center">
-            <h1>
-                Canvas Chat
-            </h1>
-            <ul id="navTab" class="nav nav-pills">
-                <li role="presentation" class="active">
-                    <a href="#signIn" data-toggle="tab">Sign In</a>
-                </li>
-                <li role="presentation">
-                    <a href="#signUp" data-toggle="tab">Sign up</a>
-                </li>                
-            </ul>          
-        </div>
-
-    </div>
-    <div class="container">
-        <div class="tab-content">
-            <!-- Sign In form -->
-            <div role="tabpanel" class="tab-pane active" id="signIn">
-                <div class="col-sm-6 col-sm-offset-3">
-
-                    <% if (typeof message !== 'undefined' && message.length > 0) { %>
-                        <div class="alert alert-danger"><%= message %></div>
-                    <% } %>
-                    <!-- LOGIN FORM TODO: Move them to partials-->
-                    <form action="/login" method="post">
-                        <div class="form-group">
-                            <label>Username or Email</label>
-                            <input type="text" class="form-control" name="username">
+        <div class="row">
+            <div class="col s12 l8 offset-l2">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card-panel">                            
+                            <div class="row">
+                                <div class="col s12">
+                                    <ul class="tabs">
+                                        <li class="tab col s6"><a class="active" href="#signIn">Sign In</a></li>
+                                        <li class="tab col s6"><a href="#signUp">Sign Up</a></li>                                       
+                                    </ul>
+                                </div>
+                                <div id="signIn" class="col s12">
+                                    <%- include signin.ejs %>
+                                </div>
+                                <div id="signUp" class="col s12">
+                                    <%- include signup.ejs %>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" class="form-control" name="password">
-                        </div>
-
-                        <button type="submit" class="btn btn-warning btn-lg">Login</button>
-                    </form>
+                    </div>
                 </div>
             </div>
-
-            <!-- Sign up form TODO: Move them to partials--> 
-            <div role="tabpanel" class="tab-pane" id="signUp">   
-                <div class="container">
-                    <div class="col-sm-6 col-sm-offset-3">
-
-                        <% if (typeof message !== 'undefined' && message.length > 0) { %>
-                            <div class="alert alert-danger"><%= message %></div>
-                        <% } %>
-
-                        <form action="/signup" method="post">
-                            <h3> Required: </h3>
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input type="text" class="form-control" name="username">
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="text" class="form-control" name="email">
-                            </div>
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" class="form-control" name="password">
-                            </div>
-                            <button type="submit" class="btn btn-warning btn-lg">Signup</button>
-                        </form>
-                    </div>
-                </div>                     
-            </div>            
-        </div>
-    </div>
-    <script src="/js/index.js"></script>
+      </div>
+    </div>    
+    <!-- Load app main js -->
+    <script src="/login/main.js"></script>
 </body>
 </html>
