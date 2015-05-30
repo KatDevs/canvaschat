@@ -1,17 +1,32 @@
+<!doctype html>
 <html>
 <head>
-    <title>Canvas Chat</title>  
+    <title>Canvas Chat</title>    
     <link rel="stylesheet" href="vendor/materialize/css/materialize.min.css">    
     <link rel="stylesheet" href="css/main.css">    
-   <!-- Load vendor JS -->
+    <!-- Load vendor JS -->
     <script type="text/javascript" src="vendor/jquery/jquery.js"></script>
-    <script type="text/javascript" src="vendor/materialize/js/materialize.js"></script>    
+    <script type="text/javascript" src="vendor/materialize/js/materialize.js"></script>
 </head>
-<body>
-
+<body>    	
 	<header>
 		<%- include partials/common/header.ejs %>
 	</header>
-
+    <div class="container">
+     <% if (message.length > 0) { %>
+        <%- include partials/common/error.ejs %>        
+    <% } %>          
+        <div class="row">
+            <div class="col s6">
+            	<%- include partials/profile/local-details.ejs %>
+            </div>
+            <div class="col s6">
+            	<%- include partials/profile/facebook-details.ejs %>
+            </div>
+      </div>
+    </div>    
+    <!-- Load profile main js -->
+    <script src="/profile/main.js"></script>
 </body>
 </html>
+
