@@ -108,7 +108,7 @@ function configure(config) {
       user.local.password = await user.generateHash(password)
       user.local.userName = email
       user.local.firstName = req.body.firstName
-      user.local.lastName = re.body.lastName
+      user.local.lastName = req.body.lastName
       
       try{
         let result = await user.save()
