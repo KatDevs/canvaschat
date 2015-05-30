@@ -4,8 +4,8 @@
 module.exports = {
 	development:{
 	    'facebook' : {
-	        'consumerKey': '846767545359932',
-	        'consumerSecret': 'ff7e28149a5dcde3ca0b6dc4fa40ae47',
+	        'consumerKey': process.env.FBAPPID || '',
+	        'consumerSecret': process.env.FBAPPSECRET || '',
 	        'callbackUrl': 'http://socialauthenticator.com:8000/auth/facebook/callback'	        					   
 	    }		
 	}

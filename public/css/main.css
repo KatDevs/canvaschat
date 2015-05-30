@@ -1,3 +1,7 @@
 .hide-content {
 	display: none !important;
 }
+
+.padding-top {
+	padding-top: 10px;
+}
