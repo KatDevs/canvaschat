@@ -51,6 +51,8 @@
     "path": "^0.11.14",
     "promise": "^7.0.1",
     "require-dir": "^0.3.0",
+    "socket.io": "^1.3.5",
+    "socket.io-client": "^1.3.5",
     "songbird": "^1.0.1"
   },
   "devDependencies": {

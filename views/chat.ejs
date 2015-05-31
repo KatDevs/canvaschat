@@ -12,6 +12,7 @@
 <body>    	
 	<header>
 		<%- include partials/common/header.ejs %>
+        <span id="fromUserId" data-id="<%= user.facebook.id %>">
 	</header>
 	<main>
 		<%- include partials/chat/canvas.ejs %>	    
