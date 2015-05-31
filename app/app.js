@@ -74,6 +74,7 @@ class App {
         // TODO: profile/main.js
         app.use('/profile/main.js', browserify('./public/js/profile/main.js'))
         app.use('/chat/main.js', browserify('./public/js/chat/main.js'))
+
         // TODO: chatroom/main.js
 
 		this.server = Server(app)
@@ -114,6 +115,13 @@ class App {
 				if (toSocketId) {
 					connectedSockets[toSocketId].emit('server:mouse-up', update.isDrawing)
 				}				
+			})
+
+			socket.on('client:erase-canvas', (update) => {
+				let toSocketId = people[update.to]
+				if (toSocketId) {
+					connectedSockets[toSocketId].emit('server:erase-canvas', update)
+				}	
 			})
         })
 
