@@ -8,29 +8,87 @@ $(function(){
 		let $currentSelectedFriend;
 		let toId;
 		let canvasForm = document.getElementById('canvas')
-		console.log(canvasForm)	
+		console.log(canvasForm)
+
+		let colorMap = {
+			"red":"#ef5350",
+			"blue":"#42a5f5",
+			"teal": "#26a69a"			
+		}
+
+		let sizeMap = {
+			"1x" : "10",
+			"2x" : "25",
+			"3x" : "40"
+		}
+
+		let selectedColor = colorMap["red"];
+		let selectedSize = sizeMap["1x"];
 
 		let ctx = canvasForm.getContext('2d')
+
+		let clearActive = function($target) {
+			$target.find(".js-friend-item").removeClass("teal");
+			$target.find(".js-friend-name").removeClass("white-text");
+		}
+
+		let setActive = function($target) {
+			$target.find(".js-friend-item").addClass("teal");
+			$target.find(".js-friend-name").addClass("white-text");
+		}
+
 		$(".js-friends-list-item").click(function(e){
+			console.log("clicked")
 			let $target = $(e.currentTarget);
 			toId = $target.data("id");
 			if($currentSelectedFriend) {
-				$target.find(".js-friend-item").removeClass("teal");
-				$target.find(".js-friend-name").removeClass("white-text");
+				clearActive($target);
+				// if the same friend is selected again.
+				let curDataId = $currentSelectedFriend.data("id");
+				if(toId === curDataId) {
+					toId = null;
+					$currentSelectedFriend = null;
+					return;
+				}				
 			}
-
-			$target.find(".js-friend-item").addClass("teal");
-			$target.find(".js-friend-name").addClass("white-text");
+			setActive($target)			
 			$currentSelectedFriend = $target;				
 		});
+
+		$(".js-canvas-color").click(function(e){
+			e.preventDefault();
+			let $target = $(e.currentTarget);
+ 			selectedColor = colorMap[$target.data("color")];
+ 			console.log(selectedColor);
+		});
+
+		$(".js-canvas-size").click(function(e){
+			e.preventDefault();
+			let $target = $(e.currentTarget);
+ 			selectedSize = sizeMap[$target.data("size")];
+ 			console.log(selectedSize);
+		});
+
+
+		$(".js-clear-canvas").click(function(e){
+			e.preventDefault();
+			clearCanvas();
+			socket.emit('client:erase-canvas', {to : toId})
+		});
+
+		let clearCanvas = function(){
+			ctx.clearRect(0,0,680,405)
+		}
 
 		let isDrawing	
 		let drawOnCanvas = function(inDrawingMode, pos){
 			isDrawing = inDrawingMode
-			ctx.lineWidth = 10
-			ctx.strokeStyle = '#ff0000'
+			ctx.beginPath();              
+			ctx.lineWidth = pos.size
+			ctx.strokeStyle = pos.color
 			ctx.lineJoin = ctx.lineCap = 'round'
 			ctx.moveTo(pos.x, pos.y)
+			ctx.stroke();
 		}
 
 		let drawOnMove = function(pos) {
@@ -43,7 +101,9 @@ $(function(){
 		canvasForm.onmousedown = function(e) {
 	        let pos = {
 	          x : e.clientX - canvasForm.offsetLeft,
-	          y: e.clientY - canvasForm.offsetTop
+	          y: e.clientY - canvasForm.offsetTop,
+	          color: selectedColor,
+	          size: selectedSize
 	        }
 
 	        if(toId){
@@ -59,7 +119,9 @@ $(function(){
 	    	if(isDrawing) {
 		       let pos = {
 		          x : e.clientX - canvasForm.offsetLeft,
-	          	  y: e.clientY - canvasForm.offsetTop
+	          	  y: e.clientY - canvasForm.offsetTop,
+	          	  color: selectedColor,
+	          	  size: selectedSize
 		        }
 		       if(toId){
 			        drawOnMove(pos)
@@ -81,6 +143,10 @@ $(function(){
 
 		socket.on('connect', () => {	
 			socket.emit('addUser', facebookId)
+		})
+
+		socket.on('server:erase-canvas', function(update){
+			clearCanvas();
 		})
 
 		socket.on('server:mouse-down', function(pos) {

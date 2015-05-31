@@ -1,16 +1,47 @@
-<div class="card-panel teal clear-padding">
-	<div class="row">
-		<div class="col s1">
-			<i class="mdi-content-undo white-text"></i>
-		</div>
-		<div class="col s1">
-			<i class="mdi-content-save white-text"></i>
-		</div>
-		<div class="col s1">
-			<i class="mdi-social-share white-text"></i>
-		</div>
-		<div class="col s1">
-			<i class="mdi-content-content-copy white-text"></i>
-		</div>				
-	</div>	
+<div class="card-panel">
+	<a class="btn waves-effect waves-light teal tooltipped js-clear-canvas" 
+		data-position="top" 
+		data-delay="50" 
+		data-tooltip="Clear">
+		<i class="mdi-content-undo white-text"></i>
+	</a>
+	<a class="btn waves-effect waves-light teal tooltipped" 
+		data-position="top" data-delay="50" 
+		data-tooltip="Save">
+		<i class="mdi-content-save white-text"></i>
+	</a>
+	<a class="btn waves-effect waves-light teal tooltipped" 
+		data-position="top" data-delay="50" 
+		data-tooltip="Share">
+		<i class="mdi-social-share white-text"></i>
+	</a>
+	<a class="btn waves-effect waves-light teal tooltipped" 
+		data-position="top" data-delay="50" 
+		data-tooltip="Copy">
+		<i class="mdi-content-content-copy white-text"></i>
+	</a>
+	
+	<!-- Dropdown Trigger -->
+	<a class='dropdown-button btn' href='#' 
+		data-beloworigin="true"
+		data-activates='colorBtn'>Color</a>
+
+	<!-- Dropdown Structure -->
+	<ul id='colorBtn' class='dropdown-content'>
+		<li><a class="js-canvas-color" data-color="red">Red</a></li>
+		<li><a class="js-canvas-color" data-color="blue">Blue</a></li>
+		<li><a class="js-canvas-color" data-color="teal">Teal</a></li>
+	</ul>
+
+	<!-- Dropdown Trigger -->
+	<a class='dropdown-button btn' href='#' 
+		data-beloworigin="true"
+		data-activates='sizeBtn'>Size</a>
+
+	<!-- Dropdown Structure -->
+	<ul id='sizeBtn' class='dropdown-content'>
+		<li><a class="js-canvas-size" data-size="1x">1x</a></li>
+		<li><a class="js-canvas-size" data-size="2x">2x</a></li>
+		<li><a class="js-canvas-size" data-size="3x">3x</a></li>
+	</ul>
 </div>
