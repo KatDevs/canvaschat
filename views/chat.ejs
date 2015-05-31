@@ -15,11 +15,17 @@
         <span id="fromUserId" data-id="<%= user.facebook.id %>">
 	</header>
 	<main>
-		<%- include partials/chat/canvas.ejs %>	    
+        <div class="row">
+            <div class="col s6">
+                <%- include partials/chat/canvas.ejs %>                     
+            </div>
+            <div class="col s12 l6">
+               <%- include partials/chat/friends.ejs %>                 
+            </div>
+        </div>
     </main>    
-    <footer class="page-footer">
-    	<%- include partials/chat/friends.ejs %>    	
-    </footer>
+    <!-- <footer class="page-footer">
+    </footer> -->
     <!-- Load profile main js -->
     <script src="/chat/main.js"></script>
 </body>

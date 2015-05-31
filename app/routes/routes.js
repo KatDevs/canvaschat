@@ -51,7 +51,7 @@ module.exports = (app) => {
 		promises.push(new Promise((resolve, reject) => FB.api('/me/friends', resolve)))
 
 		let [friendsList] = await Promise.all(promises);     
-
+		console.log(friendsList);
 		let friendsListWithPic = []			
 		if(friendsList && friendsList.data){      
 			let userData = friendsList.data
@@ -66,7 +66,7 @@ module.exports = (app) => {
 				})
 			}
 		}
-
+		console.log(friendsListWithPic);
 		res.render('chat.ejs', {
 			user: req.user,
 			fbUsers: friendsListWithPic
