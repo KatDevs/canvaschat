@@ -3,6 +3,8 @@ body {
     display: flex;
     min-height: 100vh;
     flex-direction: column;
+    -webkit-backface-visibility: hidden; /* Chrome, Safari, Opera */
+   	backface-visibility: hidden;
 }
 main {
     flex: 1 0 auto;

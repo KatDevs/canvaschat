@@ -1,7 +1,14 @@
 <div class="container">
     <div class="row">
-        <div class="col s3">
-
-        </div>
+	    <% for(var i=0; i<fbUsers.length; i++) {%>
+	    	<div class="col s3" 	    		
+	    		data-id="<%= fbUsers[i].id %>" data-name="<%= fbUsers[i].name %>">
+              <img src="<%= fbUsers[i].pic%>" 
+              	data-position="top" 
+	    		data-delay="50" 
+	    		data-tooltip="<%= fbUsers[i].name %>"
+              alt="" class="circle responsive-img tooltipped" />
+           	</div>
+	    <% } %>          	        
     </div>
 </div>        

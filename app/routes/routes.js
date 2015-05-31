@@ -1,4 +1,8 @@
 let isLoggedIn = require('../middlewares/isLoggedIn')
+let FB = require('fb')
+let _ = require('lodash')
+let then = require('express-then')
+let Promise = require('promise');
 
 let networks = {  
   facebook: {
@@ -10,6 +14,13 @@ let networks = {
 
 module.exports = (app) => {
 	let passport = app.passport
+	let facebookConfig = app.config.auth.facebook
+
+    FB.options({
+        appId:          facebookConfig.consumerKey,
+        appSecret:      facebookConfig.consumerSecret,
+        redirectUri:    facebookConfig.callbackUrl
+    });
 	
 	app.get('/', (req, res) => {
 		res.render('index.ejs', {message: req.flash('error')})
@@ -33,15 +44,40 @@ module.exports = (app) => {
 		failureFlash: true
 	}))
 
-	app.get('/chat', isLoggedIn, (req, res) => {
-		res.render('chat.ejs', {})
-	})
+	app.get('/chat', isLoggedIn, then(async (req, res) => {       
+		let atoken = req.user.facebook.token;    	
+		FB.setAccessToken(atoken);
+		let promises = [];    	    	
+		promises.push(new Promise((resolve, reject) => FB.api('/me/friends', resolve)))
+
+		let [friendsList] = await Promise.all(promises);     
+
+		let friendsListWithPic = []			
+		if(friendsList && friendsList.data){      
+			let userData = friendsList.data
+			for(let friend of userData){
+				// todo user promise all
+				let profilePicObj =  await new Promise((resolve, reject) => FB.api('/' + friend.id + '/picture', {redirect:false}, resolve))
+      			let profilePic = profilePicObj && profilePicObj.data ? profilePicObj.data.url : ''
+				friendsListWithPic.push({
+					name: friend.name,
+					id: friend.id,
+					pic: profilePic
+				})
+			}
+		}
+
+		res.render('chat.ejs', {
+			user: req.user,
+			fbUsers: friendsListWithPic
+		})
+	}))
 
 	app.get('/profile', isLoggedIn, (req, res) => {
-        res.render('profile.ejs', {
-            user: req.user,
-            message: req.flash('error')
-        })
+		res.render('profile.ejs', {
+			user: req.user,
+			message: req.flash('error')
+		})
     })
 
 	app.get('/auth/facebook', passport.authenticate('facebook', {
