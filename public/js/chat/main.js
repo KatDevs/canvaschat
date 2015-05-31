@@ -8,8 +8,7 @@ $(function(){
 		let $currentSelectedFriend;
 		let toId;
 		let canvasForm = document.getElementById('canvas')
-		console.log(canvasForm)
-
+		
 		let colorMap = {
 			"red":"#ef5350",
 			"blue":"#42a5f5",
@@ -74,6 +73,29 @@ $(function(){
 			e.preventDefault();
 			clearCanvas();
 			socket.emit('client:erase-canvas', {to : toId})
+			Materialize.toast('Canvas cleared', 2000)
+		});
+
+		$(".js-save-canvas").click(function(e){
+			e.preventDefault()
+			 var dataURL = canvasForm.toDataURL()
+			 console.log({foo:dataURL})
+			 $.ajax({
+			 	url:"/save/canvas",
+			 	type:"post",
+			 	data: {
+			 		userId: $("#fromUserId").data("id"),
+			 		fromUser: $("#fromUserFbName").data("name"),
+  					toUser: $currentSelectedFriend.find(".js-friend-name").data("name"),
+  					imgUrl: dataURL
+			 	},
+			 	success: function(){
+					Materialize.toast('Canvas successfully saved', 2000)
+			 	},
+			 	error: function(){
+					Materialize.toast('Error saving canvas', 2000)
+			 	}
+			 });
 		});
 
 		let clearCanvas = function(){

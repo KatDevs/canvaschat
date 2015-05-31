@@ -21,6 +21,11 @@ main {
 	padding: 0 !important;
 }
 
+.thumbnail {
+    width: 80px !important;
+    height: 80px !important;
+}
+
 .friend-item {
 	margin-bottom:0;
 }
