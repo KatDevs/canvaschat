@@ -3,6 +3,7 @@ let FB = require('fb')
 let _ = require('lodash')
 let then = require('express-then')
 let Promise = require('promise');
+let UserCanvas = require('../models/usercanvas')
 
 let networks = {  
   facebook: {
@@ -69,16 +70,23 @@ module.exports = (app) => {
 		console.log(friendsListWithPic);
 		res.render('chat.ejs', {
 			user: req.user,
-			fbUsers: friendsListWithPic
+			fbUsers: friendsListWithPic			
 		})
 	}))
 
-	app.get('/profile', isLoggedIn, (req, res) => {
+	app.get('/profile', isLoggedIn, then(async(req, res) => {
+		let savedCanvases = [];
+		if(req.user.facebook) {
+			let userFbId = req.user.facebook.id;
+			savedCanvases = await UserCanvas.promise.find({userId: userFbId});
+			console.log(savedCanvases);
+		}
 		res.render('profile.ejs', {
 			user: req.user,
-			message: req.flash('error')
+			message: req.flash('error'),
+			savedCanvases: savedCanvases
 		})
-    })
+    }))
 
 	app.get('/auth/facebook', passport.authenticate('facebook', {
 		scope: ['email', 'user_posts', 'user_photos', 'read_stream',
@@ -106,5 +114,12 @@ module.exports = (app) => {
     	req.logout()
     	req.redirect('/')
     })
+
+    app.post('/save/canvas',isLoggedIn, then(async (req, res) => {
+    	console.log(req.body)
+    	let userCanvas = new UserCanvas(req.body)
+    	await userCanvas.save();
+    	res.send();
+    }));
 
 }
