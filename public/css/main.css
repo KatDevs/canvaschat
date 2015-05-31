@@ -14,5 +14,13 @@ main {
 }
 
 .padding-top {
-	padding-top: 10px;
+	padding-top: 10px !important; 
+}
+
+.clear-padding {
+	padding: 0 !important;
+}
+
+.friend-item {
+	margin-bottom:0;
 }
