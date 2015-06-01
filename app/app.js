@@ -108,7 +108,6 @@ class App {
 					connectedSockets[toSocketId].emit('server:mouse-move', update.pos)
 				}
 			})
-
 			socket.on('client:mouse-up', (update) => {
 				console.log('client:mouse-up', update)
 				let toSocketId = people[update.to]

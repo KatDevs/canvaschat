@@ -41,7 +41,7 @@ $(function(){
 			let $target = $(e.currentTarget);
 			toId = $target.data("id");
 			if($currentSelectedFriend) {
-				clearActive($target);
+				clearActive($currentSelectedFriend);
 				// if the same friend is selected again.
 				let curDataId = $currentSelectedFriend.data("id");
 				if(toId === curDataId) {
