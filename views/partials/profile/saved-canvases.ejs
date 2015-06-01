@@ -1,0 +1,19 @@
+<table class="hoverable">
+        <thead>
+          <tr>
+              <th data-field="id">From</th>
+              <th data-field="name">To</th>
+              <th data-field="price">Image</th>
+          </tr>
+        </thead>
+
+        <tbody>
+        <% for(var i=0; i<savedCanvases.length; i++) {%>
+          <tr>
+            <td><%= savedCanvases[i].fromUser%></td>
+            <td><%= savedCanvases[i].toUser%></td>
+            <td><a target="_blank" href="<%= savedCanvases[i].imgUrl%>"><img src="<%= savedCanvases[i].imgUrl%>" class="thumbnail"/></a></td>
+          </tr>
+          <% } %> 
+        </tbody>
+</table>
