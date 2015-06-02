@@ -1,47 +1,65 @@
-<div class="card-panel">
-	<a class="btn waves-effect waves-light teal tooltipped js-clear-canvas" 
-		data-position="top" 
-		data-delay="50" 
-		data-tooltip="Clear">
-		<i class="mdi-action-delete white-text"></i>
-	</a>
-	<a class="btn waves-effect waves-light teal tooltipped js-save-canvas" 
-		data-position="top" data-delay="50" 
-		data-tooltip="Save">
-		<i class="mdi-content-save white-text"></i>
-	</a>
-	<a class="btn waves-effect waves-light teal tooltipped js-share-canvas" 
-		data-position="top" data-delay="50" 
-		data-tooltip="Share">
-		<i class="mdi-social-share white-text"></i>
-	</a>
-	<a class="btn waves-effect waves-light teal tooltipped" 
-		data-position="top" data-delay="50" 
-		data-tooltip="Copy">
-		<i class="mdi-content-content-copy white-text"></i>
-	</a>
-	
-	<!-- Dropdown Trigger -->
-	<a class='dropdown-button btn' href='#' 
-		data-beloworigin="true"
-		data-activates='colorBtn'>Color</a>
+<ul class="collapsible" data-collapsible="accordion">
+    <li>
+        <div class="collapsible-header"><i class="mdi-image-color-lens"></i>Palette</div>
+	        <div class="collapsible-body">
+	            <div class="row palette">
+	            	<form class="col s12">
+	            		<div class="row">
+	            			<div class="range-field col s6" >						    	
+						    	<input type="range" id="lineWidth" value="5" min="1" max="100" />
+						    	<label for="lineWidth">Line Width</label>
+						    </div>
 
-	<!-- Dropdown Structure -->
-	<ul id='colorBtn' class='dropdown-content'>
-		<li><a class="js-canvas-color" data-color="red">Red</a></li>
-		<li><a class="js-canvas-color" data-color="blue">Blue</a></li>
-		<li><a class="js-canvas-color" data-color="teal">Teal</a></li>
-	</ul>
+							<div class="file-field input-field col s6">	      	
+						      	<div class="btn">
+						        	<span>File</span>
+						        	<input type="file" id="imageLoader" name="imageLoader"/>
+						      	</div>
+							</div>
+	            		</div> 
+	            		<div class="row">
+	            			<a class="btn waves-effect waves-light teal tooltipped js-clear-canvas" 
+								data-position="top" 
+								data-delay="50" 
+								data-tooltip="Clear">
+								<i class="mdi-action-delete white-text"></i>
+							</a>
+							<a class="btn waves-effect waves-light teal tooltipped js-save-canvas" 
+								data-position="top" data-delay="50" 
+								data-tooltip="Save">
+								<i class="mdi-content-save white-text"></i>
+							</a>
+							<a class="btn waves-effect waves-light teal tooltipped js-share-canvas" 
+								data-position="top" data-delay="50" 
+								data-tooltip="Share">
+								<i class="mdi-social-share white-text"></i>
+							</a>
+							<a class="btn waves-effect waves-light teal tooltipped" 
+								data-position="top" data-delay="50" 
+								data-tooltip="Copy">
+								<i class="mdi-content-content-copy white-text"></i>
+							</a>		
+				
+							<!-- Dropdown Trigger -->
+							<a class='dropdown-button btn' href='#' 
+								data-beloworigin="true"
+								data-activates='colorBtn'>Color</a>
 
-	<!-- Dropdown Trigger -->
-	<a class='dropdown-button btn' href='#' 
-		data-beloworigin="true"
-		data-activates='sizeBtn'>Size</a>
+							<!-- Dropdown Structure -->
+							<ul id='colorBtn' class='dropdown-content'>
+								<li><a class="js-canvas-color" data-color="black">Black</a></li>
+								<li><a class="js-canvas-color" data-color="white">White</a></li>
+								<li><a class="js-canvas-color" data-color="red">Red</a></li>
+								<li><a class="js-canvas-color" data-color="blue">Blue</a></li>
+								<li><a class="js-canvas-color" data-color="teal">Teal</a></li>
+								<li><a class="js-canvas-color" data-color="green">Green</a></li>
+								<li><a class="js-canvas-color" data-color="yellow">Yellow</a></li>
+							</ul>
+	            		</div>							
+					</form>
+				</div>
+			</div>
 
-	<!-- Dropdown Structure -->
-	<ul id='sizeBtn' class='dropdown-content'>
-		<li><a class="js-canvas-size" data-size="1x">1x</a></li>
-		<li><a class="js-canvas-size" data-size="2x">2x</a></li>
-		<li><a class="js-canvas-size" data-size="3x">3x</a></li>
-	</ul>
-</div>
+        </div>
+    </li>
+</ul>

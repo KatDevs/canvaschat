@@ -12,21 +12,50 @@ $(function(){
 		let canvasForm = document.getElementById('canvas')
 		
 		let colorMap = {
+			"black" : "#000000",
+			"white" : "#ffffff",
 			"red":"#ef5350",
 			"blue":"#42a5f5",
-			"teal": "#26a69a"			
+			"teal": "#26a69a",
+			"green" : "#4caf50",
+			"yellow" : "#ffeb3b"			
 		}
 
-		let sizeMap = {
-			"1x" : "10",
-			"2x" : "25",
-			"3x" : "40"
-		}
+		// let sizeMap = {
+		// 	"1" : "1",
+		// 	"2" : "2",
+		// 	"3" : "3",
+		// 	"5" : "5",
+		// 	"8" : "8",
+		// 	"13" : "13",
+		// 	"21" : "21",
+		// 	"34" : "34",
+		// 	"55" : "55"
+		// }
 
-		let selectedColor = colorMap["red"];
-		let selectedSize = sizeMap["1x"];
+		let selectedColor = colorMap["black"]		
 
 		let ctx = canvasForm.getContext('2d')
+
+		let imageLoader = document.getElementById('imageLoader');
+    	imageLoader.addEventListener('change', handleImage, false);
+
+		function handleImage(e) {
+			let reader = new FileReader()
+			reader.onload = function(event){
+				let img = new Image()
+				img.onload = function() {				    
+				    ctx.drawImage(img,0,0, 680, 405)
+				    let imageUrl = canvasForm.toDataURL()
+				    socket.emit('client:image-upload', {
+		        		imageUrl : imageUrl,
+		        		to : toId
+		        	}) 
+				}
+				img.src = event.target.result;
+			}
+			reader.readAsDataURL(e.target.files[0]);     
+		}
 
 		let clearActive = function($target) {
 			$target.find(".js-friend-item").removeClass("teal");
@@ -145,7 +174,17 @@ $(function(){
 			}        
 		}
 
+		let drawImageOnCanvas = function(imageUri) {
+			let image = new Image()
+			image.onload = function () {
+				console.log('inside onload')
+				ctx.drawImage(image,0,0, 680, 405)				
+			}
+			image.src = imageUri
+		}
+
 		canvasForm.onmousedown = function(e) {
+			let selectedSize = $('#lineWidth').val()
 	        let pos = {
 	          x : e.clientX - canvasForm.offsetLeft,
 	          y: e.clientY - canvasForm.offsetTop,
@@ -164,6 +203,7 @@ $(function(){
 
 	    canvasForm.onmousemove = function(e) {
 	    	if(isDrawing) {
+	    	   let selectedSize = $('#lineWidth').val()
 		       let pos = {
 		          x : e.clientX - canvasForm.offsetLeft,
 	          	  y: e.clientY - canvasForm.offsetTop,
@@ -208,6 +248,10 @@ $(function(){
 
 		socket.on('server:mouse-up', function(flag) {
 			isDrawing = flag
+		})
+
+		socket.on('server:image-upload' , function(update) {
+			drawImageOnCanvas(update.imageUrl)
 		})
 	}	
 })
