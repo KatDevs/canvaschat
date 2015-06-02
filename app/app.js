@@ -122,6 +122,14 @@ class App {
 					connectedSockets[toSocketId].emit('server:erase-canvas', update)
 				}	
 			})
+
+			socket.on('client:image-upload', (update) => {
+				console.log('image upload server', update)
+				let toSocketId = people[update.to]
+				if (toSocketId) {
+					connectedSockets[toSocketId].emit('server:image-upload', update)
+				}
+			})
         })
 
 	}

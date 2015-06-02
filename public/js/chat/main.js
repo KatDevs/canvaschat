@@ -10,23 +10,28 @@ $(function(){
 		let $currentSelectedFriend;
 		let toId;
 		let canvasForm = document.getElementById('canvas')
-		
-		let colorMap = {
-			"red":"#ef5350",
-			"blue":"#42a5f5",
-			"teal": "#26a69a"			
-		}
-
-		let sizeMap = {
-			"1x" : "10",
-			"2x" : "25",
-			"3x" : "40"
-		}
-
-		let selectedColor = colorMap["red"];
-		let selectedSize = sizeMap["1x"];
 
 		let ctx = canvasForm.getContext('2d')
+
+		let imageLoader = document.getElementById('imageLoader');
+    	imageLoader.addEventListener('change', handleImage, false);
+
+		function handleImage(e) {
+			let reader = new FileReader()
+			reader.onload = function(event){
+				let img = new Image()
+				img.onload = function() {				    
+				    ctx.drawImage(img,0,0, 680, 405)
+				    let imageUrl = canvasForm.toDataURL()
+				    socket.emit('client:image-upload', {
+		        		imageUrl : imageUrl,
+		        		to : toId
+		        	}) 
+				}
+				img.src = event.target.result;
+			}
+			reader.readAsDataURL(e.target.files[0]);     
+		}
 
 		let clearActive = function($target) {
 			$target.find(".js-friend-item").removeClass("teal");
@@ -36,6 +41,13 @@ $(function(){
 		let setActive = function($target) {
 			$target.find(".js-friend-item").addClass("teal");
 			$target.find(".js-friend-name").addClass("white-text");
+		}
+
+		let getSelectedColor = () => {
+			let r = $('#js-red').val()
+			let b = $('#js-blue').val()
+			let g = $('#js-green').val()
+			return `rgb(${r},${g},${b})`
 		}
 
 		// DOM Events	
@@ -55,21 +67,7 @@ $(function(){
 			}
 			setActive($target)			
 			$currentSelectedFriend = $target;				
-		});
-
-		$(".js-canvas-color").click(function(e) {
-			e.preventDefault();
-			let $target = $(e.currentTarget);
- 			selectedColor = colorMap[$target.data("color")];
- 			console.log(selectedColor);
-		});
-
-		$(".js-canvas-size").click(function(e) {
-			e.preventDefault();
-			let $target = $(e.currentTarget);
- 			selectedSize = sizeMap[$target.data("size")];
- 			console.log(selectedSize);
-		});
+		})
 
 
 		$(".js-clear-canvas").click(function(e) {
@@ -77,7 +75,7 @@ $(function(){
 			clearCanvas();
 			socket.emit('client:erase-canvas', {to : toId})
 			Materialize.toast('Canvas cleared', 2000)
-		});
+		})
 
 		let makeAjaxCall = function(url, data, successMsg, errorMsg, additionalOptions) {
 			var opts = _.extend({},{
@@ -145,7 +143,18 @@ $(function(){
 			}        
 		}
 
+		let drawImageOnCanvas = function(imageUri) {
+			let image = new Image()
+			image.onload = function () {
+				console.log('inside onload')
+				ctx.drawImage(image,0,0, 680, 405)				
+			}
+			image.src = imageUri
+		}
+
 		canvasForm.onmousedown = function(e) {
+			let selectedSize = $('#lineWidth').val()
+			let selectedColor = getSelectedColor()
 	        let pos = {
 	          x : e.clientX - canvasForm.offsetLeft,
 	          y: e.clientY - canvasForm.offsetTop,
@@ -164,6 +173,8 @@ $(function(){
 
 	    canvasForm.onmousemove = function(e) {
 	    	if(isDrawing) {
+	    	   let selectedSize = $('#lineWidth').val()
+	    	   let selectedColor = getSelectedColor()
 		       let pos = {
 		          x : e.clientX - canvasForm.offsetLeft,
 	          	  y: e.clientY - canvasForm.offsetTop,
@@ -208,6 +219,10 @@ $(function(){
 
 		socket.on('server:mouse-up', function(flag) {
 			isDrawing = flag
+		})
+
+		socket.on('server:image-upload' , function(update) {
+			drawImageOnCanvas(update.imageUrl)
 		})
 	}	
 })
