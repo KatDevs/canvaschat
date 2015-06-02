@@ -118,8 +118,7 @@ module.exports = (app) => {
     app.post('/save/canvas',isLoggedIn, then(async (req, res) => {
     	console.log(req.body)
     	let userCanvas = new UserCanvas(req.body)
-    	await userCanvas.save();
-    	res.send();
-    }));
-
+    	await userCanvas.save()
+    	res.send()
+    }))
 }
