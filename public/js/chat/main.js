@@ -10,30 +10,6 @@ $(function(){
 		let $currentSelectedFriend;
 		let toId;
 		let canvasForm = document.getElementById('canvas')
-		
-		let colorMap = {
-			"black" : "#000000",
-			"white" : "#ffffff",
-			"red":"#ef5350",
-			"blue":"#42a5f5",
-			"teal": "#26a69a",
-			"green" : "#4caf50",
-			"yellow" : "#ffeb3b"			
-		}
-
-		// let sizeMap = {
-		// 	"1" : "1",
-		// 	"2" : "2",
-		// 	"3" : "3",
-		// 	"5" : "5",
-		// 	"8" : "8",
-		// 	"13" : "13",
-		// 	"21" : "21",
-		// 	"34" : "34",
-		// 	"55" : "55"
-		// }
-
-		let selectedColor = colorMap["black"]		
 
 		let ctx = canvasForm.getContext('2d')
 
@@ -67,6 +43,13 @@ $(function(){
 			$target.find(".js-friend-name").addClass("white-text");
 		}
 
+		let getSelectedColor = () => {
+			let r = $('#js-red').val()
+			let b = $('#js-blue').val()
+			let g = $('#js-green').val()
+			return `rgb(${r},${g},${b})`
+		}
+
 		// DOM Events	
 		$(".js-friends-list-item").click(function(e) {
 			console.log("clicked")
@@ -84,21 +67,7 @@ $(function(){
 			}
 			setActive($target)			
 			$currentSelectedFriend = $target;				
-		});
-
-		$(".js-canvas-color").click(function(e) {
-			e.preventDefault();
-			let $target = $(e.currentTarget);
- 			selectedColor = colorMap[$target.data("color")];
- 			console.log(selectedColor);
-		});
-
-		$(".js-canvas-size").click(function(e) {
-			e.preventDefault();
-			let $target = $(e.currentTarget);
- 			selectedSize = sizeMap[$target.data("size")];
- 			console.log(selectedSize);
-		});
+		})
 
 
 		$(".js-clear-canvas").click(function(e) {
@@ -106,7 +75,7 @@ $(function(){
 			clearCanvas();
 			socket.emit('client:erase-canvas', {to : toId})
 			Materialize.toast('Canvas cleared', 2000)
-		});
+		})
 
 		let makeAjaxCall = function(url, data, successMsg, errorMsg, additionalOptions) {
 			var opts = _.extend({},{
@@ -185,6 +154,7 @@ $(function(){
 
 		canvasForm.onmousedown = function(e) {
 			let selectedSize = $('#lineWidth').val()
+			let selectedColor = getSelectedColor()
 	        let pos = {
 	          x : e.clientX - canvasForm.offsetLeft,
 	          y: e.clientY - canvasForm.offsetTop,
@@ -204,6 +174,7 @@ $(function(){
 	    canvasForm.onmousemove = function(e) {
 	    	if(isDrawing) {
 	    	   let selectedSize = $('#lineWidth').val()
+	    	   let selectedColor = getSelectedColor()
 		       let pos = {
 		          x : e.clientX - canvasForm.offsetLeft,
 	          	  y: e.clientY - canvasForm.offsetTop,

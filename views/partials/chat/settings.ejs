@@ -5,7 +5,7 @@
 	            <div class="row palette">
 	            	<form class="col s12">
 	            		<div class="row">
-	            			<div class="range-field col s6" >						    	
+	            			<div class="range-field col s6" >	    	
 						    	<input type="range" id="lineWidth" value="5" min="1" max="100" />
 						    	<label for="lineWidth">Line Width</label>
 						    </div>
@@ -17,6 +17,20 @@
 						      	</div>
 							</div>
 	            		</div> 
+	            		<div class="row">
+	            			<div class="range-field col s4" >	    	
+						    	<input type="range" id="js-red" value="0" min="0" max="255" />
+						    	<label for="js-red">Red</label>
+						    </div>
+						    <div class="range-field col s4" >	    	
+						    	<input type="range" id="js-blue" value="0" min="0" max="255" />
+						    	<label for="js-blue">Blue</label>
+						    </div>
+						    <div class="range-field col s4" >	    	
+						    	<input type="range" id="js-green" value="0" min="0" max="255" />
+						    	<label for="js-green">Green</label>
+						    </div>
+	            		</div>
 	            		<div class="row">
 	            			<a class="btn waves-effect waves-light teal tooltipped js-clear-canvas" 
 								data-position="top" 
@@ -39,22 +53,6 @@
 								data-tooltip="Copy">
 								<i class="mdi-content-content-copy white-text"></i>
 							</a>		
-				
-							<!-- Dropdown Trigger -->
-							<a class='dropdown-button btn' href='#' 
-								data-beloworigin="true"
-								data-activates='colorBtn'>Color</a>
-
-							<!-- Dropdown Structure -->
-							<ul id='colorBtn' class='dropdown-content'>
-								<li><a class="js-canvas-color" data-color="black">Black</a></li>
-								<li><a class="js-canvas-color" data-color="white">White</a></li>
-								<li><a class="js-canvas-color" data-color="red">Red</a></li>
-								<li><a class="js-canvas-color" data-color="blue">Blue</a></li>
-								<li><a class="js-canvas-color" data-color="teal">Teal</a></li>
-								<li><a class="js-canvas-color" data-color="green">Green</a></li>
-								<li><a class="js-canvas-color" data-color="yellow">Yellow</a></li>
-							</ul>
 	            		</div>							
 					</form>
 				</div>
