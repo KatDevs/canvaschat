@@ -1,10 +1,12 @@
 let $ = require('jquery')
+let _ = require('lodash')
 let io = require('socket.io-client')
+let ChatUtils = require('./chat-utils')
 let socket = io()
 
 let facebookId = $('#fromUserId').attr("data-id")
 $(function(){
-	if(facebookId) {
+	if(facebookId) {		
 		let $currentSelectedFriend;
 		let toId;
 		let canvasForm = document.getElementById('canvas')
@@ -36,7 +38,8 @@ $(function(){
 			$target.find(".js-friend-name").addClass("white-text");
 		}
 
-		$(".js-friends-list-item").click(function(e){
+		// DOM Events	
+		$(".js-friends-list-item").click(function(e) {
 			console.log("clicked")
 			let $target = $(e.currentTarget);
 			toId = $target.data("id");
@@ -54,14 +57,14 @@ $(function(){
 			$currentSelectedFriend = $target;				
 		});
 
-		$(".js-canvas-color").click(function(e){
+		$(".js-canvas-color").click(function(e) {
 			e.preventDefault();
 			let $target = $(e.currentTarget);
  			selectedColor = colorMap[$target.data("color")];
  			console.log(selectedColor);
 		});
 
-		$(".js-canvas-size").click(function(e){
+		$(".js-canvas-size").click(function(e) {
 			e.preventDefault();
 			let $target = $(e.currentTarget);
  			selectedSize = sizeMap[$target.data("size")];
@@ -69,40 +72,62 @@ $(function(){
 		});
 
 
-		$(".js-clear-canvas").click(function(e){
+		$(".js-clear-canvas").click(function(e) {
 			e.preventDefault();
 			clearCanvas();
 			socket.emit('client:erase-canvas', {to : toId})
 			Materialize.toast('Canvas cleared', 2000)
 		});
 
-		$(".js-save-canvas").click(function(e){
-			e.preventDefault()
-			 var dataURL = canvasForm.toDataURL()
-			 console.log({foo:dataURL})
-			 $.ajax({
-			 	url:"/save/canvas",
+		let makeAjaxCall = function(url, data, successMsg, errorMsg, additionalOptions) {
+			var opts = _.extend({},{
+			 	url:url,
 			 	type:"post",
-			 	data: {
+			 	data: data,
+			 	success: function(){
+					Materialize.toast(successMsg, 2000)
+			 	},
+			 	error: function(){
+					Materialize.toast(errorMsg, 2000)
+			 	}
+			 },additionalOptions)
+			$.ajax(opts);	
+		}
+
+		$(".js-save-canvas").click(function(e) {
+			e.preventDefault()
+			 let dataURL = canvasForm.toDataURL()
+			 console.log({foo:dataURL})
+			 makeAjaxCall("/save/canvas", {
 			 		userId: $("#fromUserId").data("id"),
 			 		fromUser: $("#fromUserFbName").data("name"),
   					toUser: $currentSelectedFriend.find(".js-friend-name").data("name"),
   					imgUrl: dataURL
-			 	},
-			 	success: function(){
-					Materialize.toast('Canvas successfully saved', 2000)
-			 	},
-			 	error: function(){
-					Materialize.toast('Error saving canvas', 2000)
-			 	}
-			 });
+			 	}, 'Canvas successfully saved', 'Error saving canvas');			 
 		});
+
+		$(".js-share-canvas").click(function(e) {
+			e.preventDefault();			
+			let fromId = $("#fromUserId").data("id")
+			let token = $("#fromUserFbToken").data("token")
+			let blob = ChatUtils.convertBase64ToBlob(canvasForm.toDataURL());
+			let fd = ChatUtils.getFormData(blob, token, "My Awesome painting using canvas chat!");		    
+			let url = `https://graph.facebook.com/${fromId}/photos?access_token=${token}`			
+		    makeAjaxCall(url, fd,
+		    	'Canvas successfully shared',
+		    	'Error sharing canvas',{
+		    		processData:false,
+		    		contentType:false
+		    	});		    
+		})
+
+		// Canvas Events
+		let isDrawing	
 
 		let clearCanvas = function(){
 			ctx.clearRect(0,0,680,405)
 		}
 
-		let isDrawing	
 		let drawOnCanvas = function(inDrawingMode, pos){
 			isDrawing = inDrawingMode
 			ctx.beginPath();              
@@ -163,6 +188,8 @@ $(function(){
 	        })
 	    }
 
+
+	    // Socket Events
 		socket.on('connect', () => {	
 			socket.emit('addUser', facebookId)
 		})

@@ -38,6 +38,7 @@
     "express-then": "^1.0.3",
     "facebook-node-sdk": "^0.2.0",
     "fb": "^0.7.0",
+    "form-data": "^0.2.0",
     "gulp": "^3.8.11",
     "http": "0.0.0",
     "jquery": "^2.1.4",
