@@ -1,27 +1,55 @@
 <div class="card">
 	<div class="card-content">
-		<span class="card-title activator grey-text text-darken-4">Background Settings</span>
+		<span class="card-title activator grey-text text-darken-4">Actions</span>
 		<div class="row">
-			<div class="file-field input-field col s6 padding-bottom">	      	
-		      	<div class="btn">
-		        	<span> Upload Image</span>
+			<div class="col s2">
+				<a class="btn waves-effect waves-light teal tooltipped js-image-upload"
+				id = "js-image-upload" 
+				data-position="top" 
+				data-delay="50" 
+				data-tooltip="Upload Image">
+					<i class="mdi-file-file-upload white-text"></i>
+				</a>
+			</div>
+
+			<div class="col s2">
+				<a class="btn waves-effect waves-light teal tooltipped js-clear-canvas" 
+				data-position="top" 
+				data-delay="50" 
+				data-tooltip="Clear">
+					<i class="mdi-action-delete white-text"></i>
+				</a>
+			</div>
+			<div class="col s2">
+				<a class="btn waves-effect waves-light teal tooltipped js-save-canvas" 
+				data-position="top" data-delay="50" 
+				data-tooltip="Save">
+					<i class="mdi-content-save white-text"></i>
+				</a>
+			</div>
+
+			<div class="col s2">
+				<a class="btn waves-effect waves-light teal tooltipped js-share-canvas" 
+				data-position="top" data-delay="50" 
+				data-tooltip="Share">
+					<i class="mdi-social-share white-text"></i>
+				</a>
+			</div>
+
+			<div class="col s2">
+				<a class="btn waves-effect waves-light teal tooltipped" 
+				data-position="top" data-delay="50" 
+				data-tooltip="Copy">
+					<i class="mdi-content-content-copy white-text"></i>
+				</a>
+			</div>
+		</div>	
+		<div class="row hidden">
+			<div class="file-field padding-bottom col s12">	      	
+		      	<div class="btn">		        	
 		        	<input type="file" id="imageLoader" name="imageLoader"/>
 		      	</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="range-field col s4" >	    	
-		    	<input type="range" id="js-bg-red" value="255" min="0" max="255" />
-		    	<label for="js-bg-red">Red</label>
-		    </div>
-		    <div class="range-field col s4" >	    	
-		    	<input type="range" id="js-bg-blue" value="255" min="0" max="255" />
-		    	<label for="js-bg-blue">Blue</label>
-		    </div>
-		    <div class="range-field col s4" >	    	
-		    	<input type="range" id="js-bg-green" value="255" min="0" max="255" />
-		    	<label for="js-bg-green">Green</label>
-		    </div>
-		</div>
+		</div>	
 	</div>
 </div>

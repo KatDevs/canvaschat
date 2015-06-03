@@ -85,7 +85,11 @@ class App {
         })
         this.io.on('connection', socket => {
         	console.log('a user connected using socket')
-        	socket.on('disconnect', () => console.log('user disconnected'))
+        	socket.on('disconnect', () => {
+        		delete connectedSockets[socket.id]
+        		delete people[socket.username]
+        		console.log('user disconnected')
+        	})
         	socket.on('addUser', (facebookId) => {
             	console.log(facebookId, socket.id)
 				socket.username = facebookId
