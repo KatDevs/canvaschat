@@ -18,7 +18,7 @@ main {
 }
 
 .padding-bottom {
-    padding-bottom: 15px !important; 
+    padding-bottom: 20px !important; 
 }
 
 .clear-padding {
@@ -36,3 +36,6 @@ main {
 .palette {
     padding-top: 25px;
 }
+ .hidden {
+    display: none;
+ }

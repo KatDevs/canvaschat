@@ -50,20 +50,20 @@ $(function(){
 			return `rgb(${r},${g},${b})`
 		}
 
-		let changeBackgroundColor = () => {
-			let r = $('#js-bg-red').val()
-			let b = $('#js-bg-blue').val()
-			let g = $('#js-bg-green').val()
-			let bgColor = `rgb(${r},${g},${b})`
-			ctx.rect(0, 0, 680, 405)
-			ctx.fillStyle = bgColor
-			ctx.fill()
-			console.log(bgColor)
-		}
+		// let changeBackgroundColor = () => {
+		// 	let r = $('#js-bg-red').val()
+		// 	let b = $('#js-bg-blue').val()
+		// 	let g = $('#js-bg-green').val()
+		// 	let bgColor = `rgb(${r},${g},${b})`
+		// 	ctx.rect(0, 0, 680, 405)
+		// 	ctx.fillStyle = bgColor
+		// 	ctx.fill()
+		// 	console.log(bgColor)
+		// }
 
-		$("#js-bg-red").change(changeBackgroundColor)
-		$("#js-bg-green").change(changeBackgroundColor)
-		$("#js-bg-blue").change(changeBackgroundColor)
+		// $("#js-bg-red").change(changeBackgroundColor)
+		// $("#js-bg-green").change(changeBackgroundColor)
+		// $("#js-bg-blue").change(changeBackgroundColor)
 
 		// DOM Events	
 		$(".js-friends-list-item").click(function(e) {
@@ -82,6 +82,10 @@ $(function(){
 			}
 			setActive($target)			
 			$currentSelectedFriend = $target;				
+		})
+
+		$("#js-image-upload").click(() => {
+			$("#imageLoader").click()
 		})
 
 
