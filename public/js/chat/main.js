@@ -50,6 +50,21 @@ $(function(){
 			return `rgb(${r},${g},${b})`
 		}
 
+		let changeBackgroundColor = () => {
+			let r = $('#js-bg-red').val()
+			let b = $('#js-bg-blue').val()
+			let g = $('#js-bg-green').val()
+			let bgColor = `rgb(${r},${g},${b})`
+			ctx.rect(0, 0, 680, 405)
+			ctx.fillStyle = bgColor
+			ctx.fill()
+			console.log(bgColor)
+		}
+
+		$("#js-bg-red").change(changeBackgroundColor)
+		$("#js-bg-green").change(changeBackgroundColor)
+		$("#js-bg-blue").change(changeBackgroundColor)
+
 		// DOM Events	
 		$(".js-friends-list-item").click(function(e) {
 			console.log("clicked")
@@ -126,12 +141,18 @@ $(function(){
 			ctx.clearRect(0,0,680,405)
 		}
 
+		function getRandomInt(min, max) {
+  			return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+
 		let drawOnCanvas = function(inDrawingMode, pos){
 			isDrawing = inDrawingMode
 			ctx.beginPath();              
 			ctx.lineWidth = pos.size
 			ctx.strokeStyle = pos.color
 			ctx.lineJoin = ctx.lineCap = 'round'
+			ctx.shadowBlur = pos.shadowWidth,
+			ctx.shadowColor = pos.color
 			ctx.moveTo(pos.x, pos.y)
 			ctx.stroke();
 		}
@@ -155,11 +176,13 @@ $(function(){
 		canvasForm.onmousedown = function(e) {
 			let selectedSize = $('#lineWidth').val()
 			let selectedColor = getSelectedColor()
+			let shadowWidth = $('#shadowWidth').val()
 	        let pos = {
 	          x : e.clientX - canvasForm.offsetLeft,
 	          y: e.clientY - canvasForm.offsetTop,
 	          color: selectedColor,
-	          size: selectedSize
+	          size: selectedSize,
+	          shadowWidth : shadowWidth
 	        }
 
 	        if(toId){
@@ -175,11 +198,13 @@ $(function(){
 	    	if(isDrawing) {
 	    	   let selectedSize = $('#lineWidth').val()
 	    	   let selectedColor = getSelectedColor()
+	    	   let shadowWidth = $('#shadowWidth').val()
 		       let pos = {
 		          x : e.clientX - canvasForm.offsetLeft,
 	          	  y: e.clientY - canvasForm.offsetTop,
 	          	  color: selectedColor,
-	          	  size: selectedSize
+	          	  size: selectedSize,
+	          	  shadowWidth : shadowWidth
 		        }
 		       if(toId){
 			        drawOnMove(pos)

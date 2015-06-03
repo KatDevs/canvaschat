@@ -17,6 +17,10 @@ main {
 	padding-top: 10px !important; 
 }
 
+.padding-bottom {
+    padding-bottom: 15px !important; 
+}
+
 .clear-padding {
 	padding: 0 !important;
 }
