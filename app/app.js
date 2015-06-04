@@ -40,8 +40,8 @@ class App {
 		// configure other middleware
 		app.use(morgan('dev'))
 		app.use(cookieParser('canvas-chat-session'))
-		app.use(bodyParser.json())
-		app.use(bodyParser.urlencoded({extended : true }))
+		app.use(bodyParser.json({limit: '50mb'}))
+		app.use(bodyParser.urlencoded({limit: '50mb', extended : true }))
 
 		app.set('views', path.join(__dirname, '..', 'views'))
 		app.set('view engine', 'ejs')
@@ -97,26 +97,11 @@ class App {
 				connectedSockets[socket.id] = socket
             })
 
-			socket.on('client:mouse-down', (update) => {
-				console.log('client:mouse-down', update)
-				let toSocketId = people[update.to]
-				if (toSocketId) {
-					connectedSockets[toSocketId].emit('server:mouse-down', update.pos)
-				}	
-			})
-
-			socket.on('client:mouse-move', (update) => {
-				console.log('client:mouse-move', update)
-				let toSocketId = people[update.to]
-				if (toSocketId) {
-					connectedSockets[toSocketId].emit('server:mouse-move', update.pos)
-				}
-			})
-			socket.on('client:mouse-up', (update) => {
-				console.log('client:mouse-up', update)
-				let toSocketId = people[update.to]
-				if (toSocketId) {
-					connectedSockets[toSocketId].emit('server:mouse-up', update.isDrawing)
+			socket.on('attributes', (response) => {
+				let toSocketId = people[response.to]
+				if(toSocketId) {
+					console.log('server attributes', response)
+					connectedSockets[toSocketId].emit('server:attributes', response)
 				}				
 			})
 
@@ -134,6 +119,21 @@ class App {
 					connectedSockets[toSocketId].emit('server:image-upload', update)
 				}
 			})
+
+			socket.on("PATH", (response) => {				
+				let toSocketId = people[response.to]
+				if(toSocketId) {
+					console.log('server PATH', response)
+					connectedSockets[toSocketId].emit('server:PATH', response)
+				}
+			})
+			socket.on("MOVE", (response) => {				
+				let toSocketId = people[response.to]
+				if(toSocketId) {
+					console.log('server MOVE', response)
+					connectedSockets[toSocketId].emit('server:MOVE', response)
+				}
+			})				
         })
 
 	}

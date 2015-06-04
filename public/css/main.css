@@ -48,3 +48,14 @@ main {
  .hidden {
     display: none;
  }
+
+ .pointer {
+    cursor: pointer;
+ }
+
+ .name-truncate {
+  width: 50px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
