@@ -126,6 +126,7 @@ function registerInputListeners () {
 // Initialize socket, which handles multiuser communications
 function initSocket () {
   socket.on('connect', () => {  
+  		console.log('connected', facebookId)
       socket.emit('addUser', facebookId)
       processDrawingCommandsIntervalID = setInterval(processDrawingCommands, 20)
   })
@@ -133,21 +134,45 @@ function initSocket () {
       clearCanvas();
   })
 
-  socket.on(Messages.MOVE, moveMessageListener)
+  socket.on('server:MOVE', (response) => {
+		console.log('inside move handler', response)
+	  var fromClientID = response.from
+	  var coordsString = response.position
+	  // Parse the specified (x, y) coordinate
+	  var coords = coordsString.split(",");
+	  var position = {x:parseInt(coords[0]), y:parseInt(coords[1])};
+	  // Push a "moveTo" command onto the drawing-command stack for the sender
+	  addDrawingCommand(fromClientID, DrawingCommands.MOVE_TO, position);
+	})
 
-  socket.on(Messages.PATH, pathMessageListener)
+  socket.on('server:PATH', (response) => {
+		console.log('inside path handler', response)
+		var fromClientID = response.from
+		var pathString = response.bufferedPath
+	  // Parse the specified list of points
+	  var path = pathString.split(",");
+	 
+	  // For each point, push a "lineTo" command onto the drawing-command stack
+	  // for the sender
+	  var position;
+	  for (var i = 0; i < path.length; i+=2) {
+	    position = {x:parseInt(path[i]), y:parseInt(path[i+1])};
+	    addDrawingCommand(fromClientID, DrawingCommands.LINE_TO, position);
+	  }
+	})
 
-  socket.on('server:mouse-up', function(flag) {
-    isDrawing = flag
-  })
+
+  // socket.on('server:mouse-up', function(flag) {
+  //   isDrawing = flag
+  // })
 
   socket.on('server:image-upload' , function(update) {
     drawImageOnCanvas(update.imageUrl)
   })
 
-  socket.on('disconnected', () => {
-    clearInterval(processDrawingCommandsIntervalID)
-  })
+  // socket.on('disconnected', () => {
+  //   clearInterval(processDrawingCommandsIntervalID)
+  // })
 }
 
 let setActive = function($target) {
@@ -174,54 +199,6 @@ function initClientHandlers() {
       $currentSelectedFriend = $target;       
     })
 }
- 
-//==============================================================================
-// ORBITER EVENT LISTENERS
-//==============================================================================
-// Triggered when the connection to Union Server is ready
-// function readyListener (e) {
-//   // Register for UPC messages from Union Server
-//   msgManager.addMessageListener(UPC.JOINED_ROOM, joinedRoomListener, this);
-//   msgManager.addMessageListener(UPC.ROOM_OCCUPANTCOUNT_UPDATE,
-//                                 roomOccupantCountUpdateListener, this);
-//   msgManager.addMessageListener(UPC.ROOM_SNAPSHOT, roomSnapshotListener, this);
-//   msgManager.addMessageListener(UPC.CLIENT_ATTR_UPDATE, clientAttributeUpdateListener, this);
-//   msgManager.addMessageListener(UPC.CLIENT_REMOVED_FROM_ROOM, clientRemovedFromRoomListener, this);
- 
-//   // Register for custom messages from other users
-//   msgManager.addMessageListener(Messages.MOVE, moveMessageListener, this, [roomID]);
-//   msgManager.addMessageListener(Messages.PATH, pathMessageListener, this, [roomID]);
- 
-//   // Create a room for the drawing app, then join it
-//   msgManager.sendUPC(UPC.CREATE_ROOM, roomID);
-//   msgManager.sendUPC(UPC.JOIN_ROOM, roomID);
-// }
- 
-// Triggered when the connection to Union Server is closed
-// function closeListener (e) {
-//   setStatus("Disconnected from UnionDraw.");
-//   // Stop drawing content sent by other users
-//   clearInterval(processDrawingCommandsIntervalID);
-// }
- 
-// // Triggered when this client has joined the server-side drawing room
-// function joinedRoomListener (roomID) {
-//   // Periodically execute drawing commands sent by other users
-//   processDrawingCommandsIntervalID = setInterval(processDrawingCommands, 20);
-// }
- 
-// // Triggered when this client is informed that number of users in the
-// // server-side drawing room has changed
-// function roomOccupantCountUpdateListener (roomID, numOccupants) {
-//   numOccupants = parseInt(numOccupants);
-//   if (numOccupants == 1) {
-//     setStatus("Now drawing on your own (no one else is here at the moment)");
-//   } else if (numOccupants == 2) {
-//     setStatus("Now drawing with " + (numOccupants-1) + " other person");
-//   } else {
-//     setStatus("Now drawing with " + (numOccupants-1) + " other people");
-//   }
-// }
  
 //==============================================================================
 // HANDLE INCOMING CLIENT ATTRIBUTES
@@ -307,6 +284,7 @@ function processClientAttributeUpdate (clientID, attrName, attrVal) {
 //==============================================================================
 // Triggered when a remote client sends a "MOVE" message to this client
 function moveMessageListener (response) {
+	console.log('inside move handler', response)
   var fromClientID = response.from
   var coordsString = response.pos
   // Parse the specified (x, y) coordinate
@@ -318,6 +296,7 @@ function moveMessageListener (response) {
  
 // Triggered when a remote client sends a "PATH" message to this client
 function pathMessageListener (response) {
+	console.log('inside path handler', response)
 	var fromClientID = response.from
 	var pathString = response.pos
   // Parse the specified list of points

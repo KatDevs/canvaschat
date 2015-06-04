@@ -134,6 +134,21 @@ class App {
 					connectedSockets[toSocketId].emit('server:image-upload', update)
 				}
 			})
+
+			socket.on("PATH", (response) => {				
+				let toSocketId = people[response.to]
+				if(toSocketId) {
+					console.log('server PATH', response)
+					connectedSockets[toSocketId].emit('server:PATH', response)
+				}
+			})
+			socket.on("MOVE", (response) => {				
+				let toSocketId = people[response.to]
+				if(toSocketId) {
+					console.log('server MOVE', response)
+					connectedSockets[toSocketId].emit('server:MOVE', response)
+				}
+			})				
         })
 
 	}
