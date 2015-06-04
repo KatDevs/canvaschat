@@ -25,6 +25,14 @@ main {
 	padding: 0 !important;
 }
 
+.clear-margin {
+    margin: 0 !important;
+}
+
+.margin-ends {
+    margin: 15px 0 !important;
+}
+
 .thumbnail {
     width: 80px !important;
     height: 80px !important;
@@ -35,6 +43,7 @@ main {
 }
 .palette {
     padding-top: 25px;
+    background: #fff;
 }
  .hidden {
     display: none;
