@@ -40,8 +40,8 @@ class App {
 		// configure other middleware
 		app.use(morgan('dev'))
 		app.use(cookieParser('canvas-chat-session'))
-		app.use(bodyParser.json())
-		app.use(bodyParser.urlencoded({extended : true }))
+		app.use(bodyParser.json({limit: '50mb'}))
+		app.use(bodyParser.urlencoded({limit: '50mb', extended : true }))
 
 		app.set('views', path.join(__dirname, '..', 'views'))
 		app.set('view engine', 'ejs')
