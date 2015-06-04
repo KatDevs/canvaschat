@@ -540,7 +540,7 @@ let drawImageOnCanvas = function(imageUri) {
 	let image = new Image()
 	image.onload = function () {
 		console.log('inside onload')
-		context.drawImage(image,0,0, 600, 400)				
+		context.drawImage(image,0,0, 700, 400)				
 	}
 	image.src = imageUri
 }
