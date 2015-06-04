@@ -111,16 +111,16 @@ function initCanvas () {
   context = canvas.getContext('2d');
   context.lineCap = "round";
 }
+
+let clearCanvas = function() {
+	context.clearRect(0,0,600,400)
+}
  
 // Register callback functions to handle user input
 function registerInputListeners () {
   canvas.onmousedown = pointerDownListener;
   document.onmousemove = pointerMoveListener;
-  document.onmouseup = pointerUpListener;  
-  document.getElementById("lineWidth").onchange = thicknessSelectListener;
-  document.getElementById("js-red").onchange = colorSelectListener;
-  document.getElementById("js-blue").onchange = colorSelectListener;
-  document.getElementById("js-green").onchange = colorSelectListener;
+  document.onmouseup = pointerUpListener;    
 }
  
 // Initialize socket, which handles multiuser communications
@@ -130,6 +130,7 @@ function initSocket () {
       socket.emit('addUser', facebookId)
       processDrawingCommandsIntervalID = setInterval(processDrawingCommands, 20)
   })
+
   socket.on('server:erase-canvas', function(update){
       clearCanvas();
   })
@@ -141,8 +142,12 @@ function initSocket () {
 	  // Parse the specified (x, y) coordinate
 	  var coords = coordsString.split(",");
 	  var position = {x:parseInt(coords[0]), y:parseInt(coords[1])};
+	  var update = {
+	  	position : position,
+	  	attributes : response.attributes
+	  }
 	  // Push a "moveTo" command onto the drawing-command stack for the sender
-	  addDrawingCommand(fromClientID, DrawingCommands.MOVE_TO, position);
+	  addDrawingCommand(fromClientID, DrawingCommands.MOVE_TO, update);
 	})
 
   socket.on('server:PATH', (response) => {
@@ -157,11 +162,17 @@ function initSocket () {
 	  var position;
 	  for (var i = 0; i < path.length; i+=2) {
 	    position = {x:parseInt(path[i]), y:parseInt(path[i+1])};
-	    addDrawingCommand(fromClientID, DrawingCommands.LINE_TO, position);
+	    var update = {
+	  		position : position,
+	  		attributes : response.attributes
+	  	}
+	    addDrawingCommand(fromClientID, DrawingCommands.LINE_TO, update);
 	  }
-	})
+	})	
 
-	socket.on('server:attributes', clientAttributeUpdateListener)
+	socket.on('server:erase-canvas', function(update){
+		clearCanvas();
+	})
 
   socket.on('server:image-upload' , function(update) {
     drawImageOnCanvas(update.imageUrl)
@@ -178,7 +189,7 @@ let setActive = function($target) {
 }
 
 function initClientHandlers() {
-      $(".js-friends-list-item").click(function(e) {
+  $(".js-friends-list-item").click(function(e) {
       console.log("clicked")
       let $target = $(e.currentTarget);
       toId = $target.data("id");
@@ -194,78 +205,80 @@ function initClientHandlers() {
       }
       setActive($target)      
       $currentSelectedFriend = $target;       
-    })
-}
- 
-//==============================================================================
-// HANDLE INCOMING CLIENT ATTRIBUTES
-//==============================================================================
+  })
 
- 
-// Triggered when one of the clients in the drawing room changes an attribute
-// value. When an attribute value changes, check to see whether it was either
-// the "thickness" attribute or the "color" attribute.
-function clientAttributeUpdateListener (response) {
-	console.log('inside clientAttributeupdate handler', response)
-	let clientID = response.from
-	let attrName = response.attrName
-	let attrValue = response.attrValue
-  processClientAttributeUpdate(clientID, attrName, attrVal);
+	$(".js-save-canvas").click(function(e) {
+		e.preventDefault()
+		 let dataURL = canvas.toDataURL()
+		 console.log({foo:dataURL})
+		 makeAjaxCall("/save/canvas", {
+		 		userId: $("#fromUserId").data("id"),
+		 		fromUser: $("#fromUserFbName").data("name"),
+				toUser: $currentSelectedFriend.find(".js-friend-name").data("name"),
+				imgUrl: dataURL
+		 	}, 'Canvas successfully saved', 'Error saving canvas');			 
+	})
+
+	$(".js-share-canvas").click(function(e) {
+		e.preventDefault();			
+		let fromId = $("#fromUserId").data("id")
+		let token = $("#fromUserFbToken").data("token")
+		let blob = ChatUtils.convertBase64ToBlob(canvas.toDataURL());
+		let fd = ChatUtils.getFormData(blob, token, "My Awesome painting using canvas chat!");		    
+		let url = `https://graph.facebook.com/${fromId}/photos?access_token=${token}`			
+	    makeAjaxCall(url, fd,
+	    	'Canvas successfully shared',
+	    	'Error sharing canvas',{
+	    		processData:false,
+	    		contentType:false
+	    	});		    
+	})
+
+	$(".js-clear-canvas").click(function(e) {
+		e.preventDefault();
+		clearCanvas();
+		socket.emit('client:erase-canvas', {to : toId})
+		Materialize.toast('Canvas cleared', 2000)
+	})
+
+	$("#js-image-upload").click(() => {
+			$("#imageLoader").click()
+	})
+
+	let imageLoader = document.getElementById('imageLoader');
+	imageLoader.addEventListener('change', handleImage, false);
+
+	function handleImage(e) {
+		let reader = new FileReader()
+		reader.onload = function(event){
+			let img = new Image()
+			img.onload = function() {				    
+			    context.drawImage(img,0,0, 600, 400)
+			    let imageUrl = canvas.toDataURL()
+			    socket.emit('client:image-upload', {
+	        		imageUrl : imageUrl,
+	        		to : toId
+	        	}) 
+			}
+			img.src = event.target.result;
+		}
+		reader.readAsDataURL(e.target.files[0]);     
+	}
 }
- 
-// Triggered when a clients leaves the drawing room.
-function clientRemovedFromRoomListener (roomID, clientID) {
-  // The client is gone now, so remove all information pertaining to that client
-  delete userThicknesses[clientID];
-  delete userColors[clientID];
-  delete userCommands[clientID];
-  delete userCurrentPositions[clientID];
-}
- 
-// Checks for changes to the the "thickness" and "color" attributes.
-function processClientAttributeUpdate (clientID, attrName, attrVal) {
-  if (attrName == Attributes.THICKNESS) {
-    // The "thickness" attribute changed, so push a "set thickness" command
-    // onto the drawing command stack for the specified client. But first,
-    // bring the thickness into legal range if necessary (prevents thickness hacking).
-    addDrawingCommand(clientID, DrawingCommands.SET_THICKNESS, getValidThickness(attrVal));
-  } else if (attrName == Attributes.COLOR) {
-    // The "color" attribute changed, so push a "set color" command
-    // onto the drawing command stack for the specified client
-    addDrawingCommand(clientID, DrawingCommands.SET_COLOR, attrVal);
-  }
-}
- 
-//==============================================================================
-// HANDLE INCOMING CLIENT MESSAGES
-//==============================================================================
-// Triggered when a remote client sends a "MOVE" message to this client
-function moveMessageListener (response) {
-	console.log('inside move handler', response)
-  var fromClientID = response.from
-  var coordsString = response.pos
-  // Parse the specified (x, y) coordinate
-  var coords = coordsString.split(",");
-  var position = {x:parseInt(coords[0]), y:parseInt(coords[1])};
-  // Push a "moveTo" command onto the drawing-command stack for the sender
-  addDrawingCommand(fromClientID, DrawingCommands.MOVE_TO, position);
-}
- 
-// Triggered when a remote client sends a "PATH" message to this client
-function pathMessageListener (response) {
-	console.log('inside path handler', response)
-	var fromClientID = response.from
-	var pathString = response.pos
-  // Parse the specified list of points
-  var path = pathString.split(",");
- 
-  // For each point, push a "lineTo" command onto the drawing-command stack
-  // for the sender
-  var position;
-  for (var i = 0; i < path.length; i+=2) {
-    position = {x:parseInt(path[i]), y:parseInt(path[i+1])};
-    addDrawingCommand(fromClientID, DrawingCommands.LINE_TO, position);
-  }
+
+let makeAjaxCall = function(url, data, successMsg, errorMsg, additionalOptions) {
+	var opts = _.extend({},{
+	 	url:url,
+	 	type:"post",
+	 	data: data,
+	 	success: function(){
+			Materialize.toast(successMsg, 2000)
+	 	},
+	 	error: function(){
+			Materialize.toast(errorMsg, 2000)
+	 	}
+	 },additionalOptions)
+	$.ajax(opts);	
 }
  
 //==============================================================================
@@ -285,7 +298,12 @@ function broadcastPath () {
   socket.emit(Messages.PATH, {
       to : toId,
       from : facebookId,
-      bufferedPath : bufferedPath.join(",") 
+      bufferedPath : bufferedPath.join(","),
+      attributes : {
+      	thickness : $('#lineWidth').val(),
+      	shadow : $('#shadowWidth').val(),
+      	color : getSelectedColor()
+      } 
   })
   // Clear the local user's outgoing path data
   bufferedPath = [];
@@ -301,7 +319,12 @@ function broadcastMove (x, y) {
   socket.emit(Messages.MOVE, {
     to : toId,
     from : facebookId,
-    position : x + "," + y
+    position : x + "," + y,
+    attributes : {
+      	thickness : $('#lineWidth').val(),
+      	shadow : $('shadowWidth').val(),
+      	color : getSelectedColor()
+    }
   })
 }
  
@@ -337,30 +360,23 @@ function processDrawingCommands () {
     command = userCommands[clientID].shift();
     switch (command.commandName) {
       case DrawingCommands.MOVE_TO:
-        userCurrentPositions[clientID] = {x:command.arg.x, y:command.arg.y};
+        userCurrentPositions[clientID] = {x:command.arg.position.x, y:command.arg.position.y};
         break;
  
       case DrawingCommands.LINE_TO:
         if (userCurrentPositions[clientID] == undefined) {
-          userCurrentPositions[clientID] = {x:command.arg.x, y:command.arg.y};
+          userCurrentPositions[clientID] = {x:command.arg.position.x, y:command.position.arg.y};
         } else {
-          drawLine(userColors[clientID] || defaultLineColor,
-                   userThicknesses[clientID] || defaultLineThickness,
+          drawLine(command.arg.attributes.shadow || 0,
+          				 command.arg.attributes.color || defaultLineColor,
+                   command.arg.attributes.thickness || defaultLineThickness,
                    userCurrentPositions[clientID].x,
                    userCurrentPositions[clientID].y,
-                   command.arg.x,
-                   command.arg.y);
-           userCurrentPositions[clientID].x = command.arg.x;
-           userCurrentPositions[clientID].y = command.arg.y;
+                   command.arg.position.x,
+                   command.arg.position.y);
+           userCurrentPositions[clientID].x = command.arg.position.x;
+           userCurrentPositions[clientID].y = command.arg.position.y;
         }
-        break;
- 
-      case DrawingCommands.SET_THICKNESS:
-        userThicknesses[clientID] = command.arg;
-        break;
- 
-      case DrawingCommands.SET_COLOR:
-        userColors[clientID] = command.arg;
         break;
     }
   }
@@ -478,9 +494,13 @@ function penMove (x, y) {
       bufferedPath.push(x + "," + y);
       lastBufferTime = new Date().getTime();
     }
- 
+
+    var newThickness = document.getElementById("lineWidth").value;
+  	// Locally, set the line thickness to the selected value
+  	localLineThickness = getValidThickness(newThickness);
+ 		
     // Draw the line locally.
-    drawLine(localLineColor, localLineThickness, localPen.x, localPen.y, x, y);
+    drawLine($('#shadowWidth').val(), getSelectedColor(), localLineThickness, localPen.x, localPen.y, x, y);
  
     // Move the pen to the end of the line that was just drawn.
     localPen.x = x;
@@ -498,14 +518,25 @@ function penUp () {
 // DRAWING
 //==============================================================================
 // Draws a line on the HTML5 canvas
-function drawLine (color, thickness, x1, y1, x2, y2) {
+function drawLine (shadow, color, thickness, x1, y1, x2, y2) {
   context.strokeStyle = color;
   context.lineWidth   = thickness;
- 
+ 	context.shadowBlur = shadow
+ 	context.shadowColor = color
+
   context.beginPath();
   context.moveTo(x1, y1)
   context.lineTo(x2, y2);
   context.stroke();
+}
+
+let drawImageOnCanvas = function(imageUri) {
+	let image = new Image()
+	image.onload = function () {
+		console.log('inside onload')
+		context.drawImage(image,0,0, 600, 400)				
+	}
+	image.src = imageUri
 }
  
  
@@ -516,4 +547,11 @@ function getValidThickness (value) {
   value = parseInt(value);
   var thickness = isNaN(value) ? defaultLineThickness : value;
   return Math.max(1, Math.min(thickness, maxLineThickness));
+}
+
+let getSelectedColor = () => {
+	let r = $('#js-red').val()
+	let b = $('#js-blue').val()
+	let g = $('#js-green').val()
+	return `rgb(${r},${g},${b})`
 }
