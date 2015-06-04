@@ -119,8 +119,8 @@ let clearCanvas = function() {
 // Register callback functions to handle user input
 function registerInputListeners () {
   canvas.onmousedown = pointerDownListener;
-  document.onmousemove = pointerMoveListener;
-  document.onmouseup = pointerUpListener;    
+  canvas.onmousemove = pointerMoveListener;
+  canvas.onmouseup = pointerUpListener;    
 }
  
 // Initialize socket, which handles multiuser communications
