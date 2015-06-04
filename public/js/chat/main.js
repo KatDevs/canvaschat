@@ -161,6 +161,8 @@ function initSocket () {
 	  }
 	})
 
+	socket.on('server:attributes', clientAttributeUpdateListener)
+
   socket.on('server:image-upload' , function(update) {
     drawImageOnCanvas(update.imageUrl)
   })
@@ -198,57 +200,17 @@ function initClientHandlers() {
 //==============================================================================
 // HANDLE INCOMING CLIENT ATTRIBUTES
 //==============================================================================
-// Triggered when Union Server sends a "snapshot" describing the drawing room,
-// including a list of users supplied as unnamed arguments after the
-// roomAttributes parameter. For a description of roomSnapshotListener()'s
-// parameters, see "u54" in the UPC specification,
-// at: http://unionplatform.com/specs/upc/. This client receives the room
-// snapshot automatically when it the joins the drawing room.
-function roomSnapshotListener (requestID,
-                               roomID,
-                               occupantCount,
-                               observerCount,
-                               roomAttributes) {
-  // The unnamed arguments following 'roomAttributes' is a list of
-  // clients in the room. Assign that list to clientList.
-  var clientList = Array.prototype.slice.call(arguments).slice(5);
-  var clientID;
-  var roomAttrString;
-  var roomAttrs;
-  var attrName;
-  var attrVal;
- 
-  // Loop through the list of clients in the room to get each client's
-  // "thickness" and "color" attributes.
-  for (var i = 0; i < clientList.length; i+=5) {
-    clientID = clientList[i];
-    // Each client's room-scoped client attributes are passed as a
-    // pipe-delimited string. Split that string to get the attributes.
-    clientAttrString = clientList[i+4];
-    clientAttrs = clientAttrString == "" ? [] : clientAttrString.split("|");
- 
-    // Pass each client attribute to processClientAttributeUpdate(), which will
-    // check for the "thickness" and "color" attributes.
-    for (var j = 0; j < clientAttrs.length; j++) {
-      attrName = clientAttrs[j];
-      attrVal  = clientAttrs[j+1];
-      processClientAttributeUpdate(clientID, attrName, attrVal);
-    }
-  }
-}
+
  
 // Triggered when one of the clients in the drawing room changes an attribute
 // value. When an attribute value changes, check to see whether it was either
 // the "thickness" attribute or the "color" attribute.
-function clientAttributeUpdateListener (attrScope,
-                                        clientID,
-                                        userID,
-                                        attrName,
-                                        attrVal,
-                                        attrOptions) {
-  if (attrScope == roomID) {
-    processClientAttributeUpdate(clientID, attrName, attrVal);
-  }
+function clientAttributeUpdateListener (response) {
+	console.log('inside clientAttributeupdate handler', response)
+	let clientID = response.from
+	let attrName = response.attrName
+	let attrValue = response.attrValue
+  processClientAttributeUpdate(clientID, attrName, attrVal);
 }
  
 // Triggered when a clients leaves the drawing room.
@@ -461,30 +423,17 @@ function pointerUpListener (e) {
 // Triggered when an option in the "line thickness" menu is selected
 function thicknessSelectListener (e) {
   // Determine which option was selected
-  var newThickness = this.options[this.selectedIndex].value;
+  var newThickness = document.getElementById("lineWidth").value;
   // Locally, set the line thickness to the selected value
   localLineThickness = getValidThickness(newThickness);
-  // Share the selected thickness with other users by setting the client
-  // attribute named "thickness". Attributes are automatically shared with other
-  // clients in the room, triggering clientAttributeUpdateListener().
-  // Arguments for SET_CLIENT_ATTR are:
-  //   clientID
-  //   userID (None in this case)
-  //   attrName
-  //   escapedAttrValue
-  //   attrScope (The room)
-  //   attrOptions (An integer whose bits specify options. "4" means
-  //                the attribute should be shared).
-  msgManager.sendUPC(UPC.SET_CLIENT_ATTR,
-                     orbiter.getClientID(),
-                     "",
-                     Attributes.THICKNESS,
-                     newThickness,
-                     roomID,
-                     "4");
-  // After the user selects a value in the drop-down menu, the iPhone
-  // automatically scrolls the page, so scroll back to the top-left.
-  iPhoneToTop();
+  // Share the selected thickness with other users 
+  socket.emit('attributes', {
+  	to : toId,
+  	from : facebookId,
+  	attrName : Attributes.THICKNESS,
+  	attrValue : newThickness
+
+  })
 }
  
 // Triggered when an option in the "line color" menu is selected
@@ -494,16 +443,13 @@ function colorSelectListener (e) {
   // Locally, set the line color to the selected value
   localLineColor = newColor;
   // Share selected color with other users
-  msgManager.sendUPC(UPC.SET_CLIENT_ATTR,
-                     orbiter.getClientID(),
-                     "",
-                     Attributes.COLOR,
-                     newColor,
-                     roomID,
-                     "4");
- 
-  // Scroll the iPhone back to the top-left.
-  iPhoneToTop();
+  socket.emit('attributes', {
+  	to : toId,
+  	from : facebookId,
+  	attrName : Attributes.COLOR,
+  	attrValue : newColor
+
+  }) 
 }
  
 //==============================================================================

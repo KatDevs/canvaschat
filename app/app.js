@@ -97,26 +97,11 @@ class App {
 				connectedSockets[socket.id] = socket
             })
 
-			socket.on('client:mouse-down', (update) => {
-				console.log('client:mouse-down', update)
-				let toSocketId = people[update.to]
-				if (toSocketId) {
-					connectedSockets[toSocketId].emit('server:mouse-down', update.pos)
-				}	
-			})
-
-			socket.on('client:mouse-move', (update) => {
-				console.log('client:mouse-move', update)
-				let toSocketId = people[update.to]
-				if (toSocketId) {
-					connectedSockets[toSocketId].emit('server:mouse-move', update.pos)
-				}
-			})
-			socket.on('client:mouse-up', (update) => {
-				console.log('client:mouse-up', update)
-				let toSocketId = people[update.to]
-				if (toSocketId) {
-					connectedSockets[toSocketId].emit('server:mouse-up', update.isDrawing)
+			socket.on('attributes', (response) => {
+				let toSocketId = people[response.to]
+				if(toSocketId) {
+					console.log('server attributes', response)
+					connectedSockets[toSocketId].emit('server:attributes', response)
 				}				
 			})
 
