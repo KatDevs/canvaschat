@@ -97,30 +97,16 @@ class App {
 				connectedSockets[socket.id] = socket
             })
 
-			socket.on('client:mouse-down', (update) => {
-				console.log('client:mouse-down', update)
+			socket.on('client:end-draw', (update) => {
+				console.log(update)
 				let toSocketId = people[update.to]
 				if (toSocketId) {
-					connectedSockets[toSocketId].emit('server:mouse-down', update.pos)
+					connectedSockets[toSocketId].emit('server:end-draw', update)
 				}	
 			})
 
-			socket.on('client:mouse-move', (update) => {
-				console.log('client:mouse-move', update)
-				let toSocketId = people[update.to]
-				if (toSocketId) {
-					connectedSockets[toSocketId].emit('server:mouse-move', update.pos)
-				}
-			})
-			socket.on('client:mouse-up', (update) => {
-				console.log('client:mouse-up', update)
-				let toSocketId = people[update.to]
-				if (toSocketId) {
-					connectedSockets[toSocketId].emit('server:mouse-up', update.isDrawing)
-				}				
-			})
-
 			socket.on('client:erase-canvas', (update) => {
+				console.log(update);
 				let toSocketId = people[update.to]
 				if (toSocketId) {
 					connectedSockets[toSocketId].emit('server:erase-canvas', update)
