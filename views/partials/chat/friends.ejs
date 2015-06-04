@@ -5,19 +5,14 @@
     		<div 
     		class="card-panel friend-item js-friend-item">
     			<div class="row">
-    				<div class="col s3">
+    				<div class="col s12">
     					<img src="<%= fbUsers[i].pic%>" 			    				
     						data-delay="50" 
 		    				data-tooltip="<%= fbUsers[i].name %>"
-	              			data-position="top" 
-	              			alt="" class="circle tooltipped" />		              					              		
+	              			data-position="right" 
+	              			alt="" class="circle tooltipped" />              		
     				</div>
-    				<div class="col s9">
-    					<div class="valign-wrapper">
-								<h6 class="valign turncate js-friend-name" data-name="<%= fbUsers[i].name %>"><%= fbUsers[i].name %></h6>
-						</div>
-    				</div>
-    			</div>		    			             
+    			</div>	                	    			            
     		</div>              
        	</div>
     <% } %>          	        

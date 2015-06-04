@@ -104,7 +104,7 @@ function initCanvas () {
   canvas = document.getElementById("canvas");
 
   // Size canvas
-  canvas.width  = 600;
+  canvas.width  = 700;
   canvas.height = 400;
  
   // Retrieve context reference, used to execute canvas drawing commands
@@ -113,7 +113,7 @@ function initCanvas () {
 }
 
 let clearCanvas = function() {
-	context.clearRect(0,0,600,400)
+	context.clearRect(0,0,700,400)
 }
  
 // Register callback functions to handle user input
@@ -181,6 +181,12 @@ function initSocket () {
   socket.on('disconnected', () => {
     clearInterval(processDrawingCommandsIntervalID)
   })
+}
+
+
+let clearActive = function($target) {
+	$target.find(".js-friend-item").removeClass("teal");
+	$target.find(".js-friend-name").removeClass("white-text");
 }
 
 let setActive = function($target) {
