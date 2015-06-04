@@ -50,21 +50,6 @@ $(function(){
 			return `rgb(${r},${g},${b})`
 		}
 
-		// let changeBackgroundColor = () => {
-		// 	let r = $('#js-bg-red').val()
-		// 	let b = $('#js-bg-blue').val()
-		// 	let g = $('#js-bg-green').val()
-		// 	let bgColor = `rgb(${r},${g},${b})`
-		// 	ctx.rect(0, 0, 680, 405)
-		// 	ctx.fillStyle = bgColor
-		// 	ctx.fill()
-		// 	console.log(bgColor)
-		// }
-
-		// $("#js-bg-red").change(changeBackgroundColor)
-		// $("#js-bg-green").change(changeBackgroundColor)
-		// $("#js-bg-blue").change(changeBackgroundColor)
-
 		// DOM Events	
 		$(".js-friends-list-item").click(function(e) {
 			console.log("clicked")
@@ -139,33 +124,12 @@ $(function(){
 		})
 
 		// Canvas Events
-		let isDrawing	
+		let isDrawing
+		let plots = []
 
 		let clearCanvas = function(){
 			ctx.clearRect(0,0,680,405)
-		}
-
-		function getRandomInt(min, max) {
-  			return Math.floor(Math.random() * (max - min + 1)) + min;
-		}
-
-		let drawOnCanvas = function(inDrawingMode, pos){
-			isDrawing = inDrawingMode
-			ctx.beginPath();              
-			ctx.lineWidth = pos.size
-			ctx.strokeStyle = pos.color
-			ctx.lineJoin = ctx.lineCap = 'round'
-			ctx.shadowBlur = pos.shadowWidth,
-			ctx.shadowColor = pos.color
-			ctx.moveTo(pos.x, pos.y)
-			ctx.stroke();
-		}
-
-		let drawOnMove = function(pos) {
-			if (isDrawing) {
-		  		ctx.lineTo(pos.x, pos.y)
-		  		ctx.stroke()
-			}        
+			plots = []
 		}
 
 		let drawImageOnCanvas = function(imageUri) {
@@ -177,57 +141,58 @@ $(function(){
 			image.src = imageUri
 		}
 
-		canvasForm.onmousedown = function(e) {
+		canvasForm.addEventListener('mousedown', startDraw, false);
+		canvasForm.addEventListener('mousemove', draw, false);
+		canvasForm.addEventListener('mouseup', endDraw, false);
+
+		function startDraw(e) {
+  			isDrawing = true;
+		}
+
+		function draw(e) {
+  			if(!isDrawing) return;
+
+			let x = e.offsetX || e.layerX - canvas.offsetLeft;
+			let y = e.offsetY || e.layerY - canvas.offsetTop;
 			let selectedSize = $('#lineWidth').val()
 			let selectedColor = getSelectedColor()
 			let shadowWidth = $('#shadowWidth').val()
-	        let pos = {
-	          x : e.clientX - canvasForm.offsetLeft,
-	          y: e.clientY - canvasForm.offsetTop,
-	          color: selectedColor,
-	          size: selectedSize,
-	          shadowWidth : shadowWidth
-	        }
 
-	        if(toId){
-		        drawOnCanvas(true, pos)
-		        socket.emit('client:mouse-down', {
-		        	pos : pos,
-		        	to : toId
-		        })       
-	        }              
-	    }
+			plots.push({
+				x: x,
+				y: y,
+				color: selectedColor,
+				size: selectedSize,
+				shadowWidth : shadowWidth
+			})
 
-	    canvasForm.onmousemove = function(e) {
-	    	if(isDrawing) {
-	    	   let selectedSize = $('#lineWidth').val()
-	    	   let selectedColor = getSelectedColor()
-	    	   let shadowWidth = $('#shadowWidth').val()
-		       let pos = {
-		          x : e.clientX - canvasForm.offsetLeft,
-	          	  y: e.clientY - canvasForm.offsetTop,
-	          	  color: selectedColor,
-	          	  size: selectedSize,
-	          	  shadowWidth : shadowWidth
-		        }
-		       if(toId){
-			        drawOnMove(pos)
-			        socket.emit('client:mouse-move', {
-			        	pos : pos,
-			        	to : toId
-			        })
-		    	}
-	    	}
-	    }
+			drawOnCanvas(plots);
+		}
 
-	    canvasForm.onmouseup = function() {
-	        isDrawing = false
-	        socket.emit('client:mouse-up', {
-	        	isDrawing : false,
-	        	to : toId
-	        })
-	    }
+		function endDraw(e) {
+			isDrawing = false;
+			socket.emit('client:end-draw',{
+				plots: plots,
+				to : toId
+			});			
+			plots = [];
+		}
 
+		function drawOnCanvas(plots) {	  		
+		  ctx.beginPath();
+		  	ctx.lineWidth = plots[0].size
+			ctx.strokeStyle = plots[0].color
+			ctx.shadowColor = plots[0].color
+		  	ctx.moveTo(plots[0].x, plots[0].y);
+
+		  for(var i=1; i<plots.length; i++) {
+		  	ctx.lineWidth = plots[i].size
+			ctx.strokeStyle = plots[i].color
+			ctx.shadowColor = plots[i].color
+		    ctx.lineTo(plots[i].x, plots[i].y);
+		  }
+		  ctx.stroke();
+		}
 
 	    // Socket Events
 		socket.on('connect', () => {	
@@ -238,16 +203,9 @@ $(function(){
 			clearCanvas();
 		})
 
-		socket.on('server:mouse-down', function(pos) {
-			drawOnCanvas(true, pos)
-		})
-
-		socket.on('server:mouse-move', function(pos) {
-			drawOnMove(pos)
-		})
-
-		socket.on('server:mouse-up', function(flag) {
-			isDrawing = flag
+		socket.on('server:end-draw', function(message){
+			if(!message || message.plots.length < 1) return;			
+		  	drawOnCanvas(message.plots);
 		})
 
 		socket.on('server:image-upload' , function(update) {
