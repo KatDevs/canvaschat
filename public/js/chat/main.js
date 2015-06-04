@@ -149,23 +149,30 @@ $(function(){
   			return Math.floor(Math.random() * (max - min + 1)) + min;
 		}
 
-		let drawOnCanvas = function(inDrawingMode, pos){
-			isDrawing = inDrawingMode
-			ctx.beginPath();              
-			ctx.lineWidth = pos.size
-			ctx.strokeStyle = pos.color
-			ctx.lineJoin = ctx.lineCap = 'round'
-			ctx.shadowBlur = pos.shadowWidth,
-			ctx.shadowColor = pos.color
-			ctx.moveTo(pos.x, pos.y)
-			ctx.stroke();
+		let positions = [];
+		let drawOnCanvas = function(inDrawingMode){
+			setTimeout(function(){
+				let pos = positions.shift();
+				isDrawing = inDrawingMode
+				ctx.beginPath();              
+				ctx.lineWidth = pos.size
+				ctx.strokeStyle = pos.color
+				ctx.lineJoin = ctx.lineCap = 'round'
+				ctx.shadowBlur = pos.shadowWidth,
+				ctx.shadowColor = pos.color
+				ctx.moveTo(pos.x, pos.y)
+				ctx.stroke();
+			}, 100)						
 		}
 
-		let drawOnMove = function(pos) {
-			if (isDrawing) {
-		  		ctx.lineTo(pos.x, pos.y)
-		  		ctx.stroke()
-			}        
+		let drawOnMove = function() {
+			setTimeout(function(){
+				if (isDrawing) {
+					let pos = positions.shift()
+		  			ctx.lineTo(pos.x, pos.y)
+		  			ctx.stroke()
+				}        
+			},100)			
 		}
 
 		let drawImageOnCanvas = function(imageUri) {
@@ -190,7 +197,8 @@ $(function(){
 	        }
 
 	        if(toId){
-		        drawOnCanvas(true, pos)
+	        	positions.push(pos);
+		        drawOnCanvas(true)
 		        socket.emit('client:mouse-down', {
 		        	pos : pos,
 		        	to : toId
@@ -211,7 +219,8 @@ $(function(){
 	          	  shadowWidth : shadowWidth
 		        }
 		       if(toId){
-			        drawOnMove(pos)
+		       		positions.push(pos)
+			        drawOnMove()
 			        socket.emit('client:mouse-move', {
 			        	pos : pos,
 			        	to : toId
@@ -239,11 +248,13 @@ $(function(){
 		})
 
 		socket.on('server:mouse-down', function(pos) {
-			drawOnCanvas(true, pos)
+			positions.push(pos)
+			drawOnCanvas(true)
 		})
 
 		socket.on('server:mouse-move', function(pos) {
-			drawOnMove(pos)
+			positions.push(pos)
+			drawOnMove()
 		})
 
 		socket.on('server:mouse-up', function(flag) {
