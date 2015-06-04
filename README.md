@@ -3,7 +3,7 @@
 Canvaschat helps in communicating between two people in a fun and interactive way. Chat messages are communicated in real time, they can be persisted to a local database or shared on a social platform.
 
 # User stories
-[User stories]()
+[User stories](https://github.com/KatDevs/canvaschat/blob/master/USERSTORIES.md)
 
 # Setup
 - clone the repo: git clone git@github.com:KatDevs/canvaschat.git
