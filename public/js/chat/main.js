@@ -7,11 +7,13 @@ let socket = io()
 let facebookId = $('#fromUserId').attr("data-id")
 $(function(){
 	if(facebookId) {		
-		let $currentSelectedFriend;
-		let toId;
-		let canvasForm = document.getElementById('canvas')
+		let $currentSelectedFriend
+		let toId
+		let canvasForm = document.getElementById('client-canvas')
+		let serverCanvas = document.getElementById('server-canvas')
 
 		let ctx = canvasForm.getContext('2d')
+		let serverContext = serverCanvas.getContext('2d')
 
 		let imageLoader = document.getElementById('imageLoader');
     	imageLoader.addEventListener('change', handleImage, false);
@@ -49,21 +51,6 @@ $(function(){
 			let g = $('#js-green').val()
 			return `rgb(${r},${g},${b})`
 		}
-
-		// let changeBackgroundColor = () => {
-		// 	let r = $('#js-bg-red').val()
-		// 	let b = $('#js-bg-blue').val()
-		// 	let g = $('#js-bg-green').val()
-		// 	let bgColor = `rgb(${r},${g},${b})`
-		// 	ctx.rect(0, 0, 680, 405)
-		// 	ctx.fillStyle = bgColor
-		// 	ctx.fill()
-		// 	console.log(bgColor)
-		// }
-
-		// $("#js-bg-red").change(changeBackgroundColor)
-		// $("#js-bg-green").change(changeBackgroundColor)
-		// $("#js-bg-blue").change(changeBackgroundColor)
 
 		// DOM Events	
 		$(".js-friends-list-item").click(function(e) {
@@ -149,22 +136,22 @@ $(function(){
   			return Math.floor(Math.random() * (max - min + 1)) + min;
 		}
 
-		let drawOnCanvas = function(inDrawingMode, pos){
+		let drawOnCanvas = function(inDrawingMode, pos, context) {
 			isDrawing = inDrawingMode
-			ctx.beginPath();              
-			ctx.lineWidth = pos.size
-			ctx.strokeStyle = pos.color
-			ctx.lineJoin = ctx.lineCap = 'round'
-			ctx.shadowBlur = pos.shadowWidth,
-			ctx.shadowColor = pos.color
-			ctx.moveTo(pos.x, pos.y)
-			ctx.stroke();
+			context.beginPath();              
+			context.lineWidth = pos.size
+			context.strokeStyle = pos.color
+			context.lineJoin = context.lineCap = 'round'
+			context.shadowBlur = pos.shadowWidth,
+			context.shadowColor = pos.color
+			context.moveTo(pos.x, pos.y)
+			context.stroke()
 		}
 
-		let drawOnMove = function(pos) {
+		let drawOnMove = function(pos, context) {
 			if (isDrawing) {
-		  		ctx.lineTo(pos.x, pos.y)
-		  		ctx.stroke()
+		  		context.lineTo(pos.x, pos.y)
+		  		context.stroke()
 			}        
 		}
 
@@ -188,9 +175,8 @@ $(function(){
 	          size: selectedSize,
 	          shadowWidth : shadowWidth
 	        }
-
 	        if(toId){
-		        drawOnCanvas(true, pos)
+		        drawOnCanvas(true, pos, ctx)
 		        socket.emit('client:mouse-down', {
 		        	pos : pos,
 		        	to : toId
@@ -209,9 +195,9 @@ $(function(){
 	          	  color: selectedColor,
 	          	  size: selectedSize,
 	          	  shadowWidth : shadowWidth
-		        }
+		        }		       
 		       if(toId){
-			        drawOnMove(pos)
+			        drawOnMove(pos, ctx)
 			        socket.emit('client:mouse-move', {
 			        	pos : pos,
 			        	to : toId
@@ -239,11 +225,11 @@ $(function(){
 		})
 
 		socket.on('server:mouse-down', function(pos) {
-			drawOnCanvas(true, pos)
+			drawOnCanvas(true, pos, serverContext)
 		})
 
 		socket.on('server:mouse-move', function(pos) {
-			drawOnMove(pos)
+			drawOnMove(pos, serverContext)
 		})
 
 		socket.on('server:mouse-up', function(flag) {

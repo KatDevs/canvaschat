@@ -9,6 +9,23 @@ body {
 main {
     flex: 1 0 auto;
 }
+
+.border {
+    border: 1px solid;
+}
+
+.canvas-wrapper {
+    position: relative;
+    height: 405px;
+    width: 680px;
+}
+
+.canvas-wrapper > canvas {
+    position: absolute;
+    top : 0;
+    left: 0;
+}
+
 .hide-content {
 	display: none !important;
 }
