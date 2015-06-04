@@ -161,18 +161,13 @@ function initSocket () {
 	  }
 	})
 
-
-  // socket.on('server:mouse-up', function(flag) {
-  //   isDrawing = flag
-  // })
-
   socket.on('server:image-upload' , function(update) {
     drawImageOnCanvas(update.imageUrl)
   })
 
-  // socket.on('disconnected', () => {
-  //   clearInterval(processDrawingCommandsIntervalID)
-  // })
+  socket.on('disconnected', () => {
+    clearInterval(processDrawingCommandsIntervalID)
+  })
 }
 
 let setActive = function($target) {
