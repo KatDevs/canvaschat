@@ -18,5 +18,17 @@ Canvaschat helps in communicating between two people in a fun and interactive wa
 - run `npm start` to start the server
 - navigate to 127.0.0.1:8000 to access the website.
 
-# Video walkthrough
+# Demo
+### Features
+* User signup and connect to facebook
+![alt tag](https://github.com/KatDevs/canvaschat/blob/master/demo/signup.gif)
+
+* Profile page and view saved canvases 
+![alt tag](https://github.com/KatDevs/canvaschat/blob/master/demo/profile-saved-canvas.gif)
+
+* Canvas chat
+![alt tag](https://github.com/KatDevs/canvaschat/blob/master/demo/chat.gif)
+
+* Upload image, paing and share on facebook
+![alt tag](https://github.com/KatDevs/canvaschat/blob/master/demo/upload-share.gif)
 
